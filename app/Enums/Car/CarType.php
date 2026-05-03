@@ -13,4 +13,14 @@ enum CarType: int
     {
         return array_column(self::cases(), 'value');
     }
+
+    public static function getLabels(): array
+    {
+        return [
+            self::NEW->value => 'Новый',
+            self::USED->value => 'Б/У'
+
+        ];
+    }
+
 }

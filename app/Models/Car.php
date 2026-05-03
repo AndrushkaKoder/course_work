@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Enums\Car\CarColor;
 use App\Enums\Car\CarType;
+use Eloquent;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
@@ -16,14 +17,14 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $vin_code
  * @property int $year
  * @property int $price
- * @property CarColor $color
+ * @property string $color
  * @property CarType $type
  * @property int $count
  * @property string|null $state_number
  * @property string|null $preview
  * @property string|null $images
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  * @property string|null $deleted_at
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Car newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Car newQuery()
@@ -44,7 +45,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Car whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Car whereVinCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Car whereYear($value)
- * @mixin \Eloquent
+ * @mixin Eloquent
  */
 class Car extends Model
 {
@@ -66,7 +67,22 @@ class Car extends Model
     ];
 
     protected $casts = [
-        'color' => CarColor::class,
-        'type' => CarType::class,
+        'type' => CarType::class
     ];
+
+    public function getViewName(): string
+    {
+        return "{$this->mark} {$this->model} {$this->year}";
+    }
+
+    public function getViewPrice(): string
+    {
+        $pr = (string)$this->price;
+
+        $val1 = substr($pr, 0, 3);
+        $val2 = substr($pr, 3, 6);
+        $val3 = substr($pr, 6, 9);
+
+        return "{$val1}-{$val2}-{$val3} P";
+    }
 }
