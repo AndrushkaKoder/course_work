@@ -88,6 +88,7 @@ final readonly class SailService
     private function createSail(array $data, ?Car $car = null): Sail
     {
         $sail = new Sail();
+        $sail->status = $data['status'];
         $sail->car_id = $data['car_id'] ?? $car->id;
         $sail->client_id = $data['client_id'];
         $sail->user_id = Auth::id();

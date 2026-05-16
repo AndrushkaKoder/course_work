@@ -2,32 +2,26 @@
 
 declare(strict_types=1);
 
-namespace App\MoonShine\Resources\Car\Pages;
+namespace App\MoonShine\Resources\Option\Pages;
 
-use App\Enums\Car\CarType;
-use App\Models\Car;
-use MoonShine\Contracts\UI\ActionButtonContract;
 use MoonShine\Laravel\Pages\Crud\IndexPage;
 use MoonShine\Contracts\UI\ComponentContract;
-use MoonShine\UI\Components\ActionButton;
 use MoonShine\UI\Components\Table\TableBuilder;
 use MoonShine\Contracts\UI\FieldContract;
 use MoonShine\Laravel\QueryTags\QueryTag;
 use MoonShine\UI\Components\Metrics\Wrapped\Metric;
-use MoonShine\UI\Fields\Color;
 use MoonShine\UI\Fields\ID;
-use App\MoonShine\Resources\Car\CarUsedResource;
+use App\MoonShine\Resources\Option\OptionResource;
 use MoonShine\Support\ListOf;
-use MoonShine\UI\Fields\Image;
-use MoonShine\UI\Fields\Number;
+use MoonShine\UI\Fields\Preview;
 use MoonShine\UI\Fields\Text;
 use Throwable;
 
 
 /**
- * @extends IndexPage<CarUsedResource>
+ * @extends IndexPage<OptionResource>
  */
-class CarIndexPage extends IndexPage
+class OptionIndexPage extends IndexPage
 {
     protected bool $isLazy = true;
 
@@ -38,16 +32,10 @@ class CarIndexPage extends IndexPage
     {
         return [
             ID::make(),
-            Image::make('Превью', 'preview'),
-            Text::make('Модель', 'model'),
-            Text::make('Марка', 'mark'),
-            Text::make('Цена', 'price', fn(Car $car) => $car->getViewPrice()),
-            Text::make('Год', 'year'),
-            Text::make('VIN', 'vin_code'),
-            Color::make('Цвет', 'color'),
-            Number::make('На складе', 'count'),
-            Text::make('Дата добавления', 'created_at'),
-
+            Preview::make('Фото', 'preview')->image(),
+            Text::make('Название', 'title'),
+            Text::make('Цена', 'price'),
+            Text::make('Количество', 'count'),
         ];
     }
 
@@ -125,5 +113,4 @@ class CarIndexPage extends IndexPage
             ...parent::bottomLayer()
         ];
     }
-
 }

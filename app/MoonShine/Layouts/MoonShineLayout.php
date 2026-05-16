@@ -16,6 +16,7 @@ use MoonShine\Contracts\ColorManager\ColorManagerContract;
 use MoonShine\Contracts\ColorManager\PaletteContract;
 use MoonShine\MenuManager\MenuGroup;
 use MoonShine\MenuManager\MenuItem;
+use App\MoonShine\Resources\Option\OptionResource;
 
 final class MoonShineLayout extends AppLayout
 {
@@ -35,15 +36,16 @@ final class MoonShineLayout extends AppLayout
     {
         return [
             ...parent::menu(),
+            MenuItem::make(ClientResource::class, 'Клиенты'),
             MenuGroup::make('Автомобили', [
                 MenuItem::make(CarNewResource::class, 'Новые'),
                 MenuItem::make(CarUsedResource::class, 'С пробегом'),
             ]),
-            MenuItem::make(ClientResource::class, 'Клиенты'),
             MenuGroup::make('Сделки', [
                 MenuItem::make(SailSellResource::class, 'Продажа'),
                 MenuItem::make(SailBuyResource::class, 'Покупка'),
             ]),
+            MenuItem::make(OptionResource::class, 'Доп.опции'),
         ];
     }
 

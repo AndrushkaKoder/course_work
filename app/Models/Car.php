@@ -68,13 +68,13 @@ class Car extends Model
         'count',
         'state_number',
         'preview',
-        'images',
+        'files',
         'mileage',
     ];
 
     protected $casts = [
         'type' => CarType::class,
-        'files' => 'array',
+        'files' => 'json',
     ];
 
     public function getViewName(): string

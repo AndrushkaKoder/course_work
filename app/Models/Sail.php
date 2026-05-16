@@ -10,7 +10,9 @@ use App\Traits\Fileable;
 use Eloquent;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Carbon;
+use MoonShine\Laravel\Models\MoonshineUser;
 
 /**
  * @property int $id
@@ -59,13 +61,12 @@ class Sail extends Model
 
     protected $casts = [
         'status' => SailStatus::class,
-        'type' => SailType::class,
         'files' => 'array'
     ];
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(MoonshineUser::class, 'user_id');
     }
 
     public function car(): BelongsTo
@@ -78,8 +79,23 @@ class Sail extends Model
         return $this->belongsTo(Client::class, 'client_id');
     }
 
+    public function options(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Option::class,
+            'option_sale',
+            'sail_id',
+            'option_id'
+        );
+    }
+
     public function getFiles(): array
     {
         return $this->files;
+    }
+
+    public function formattedPrice(): string
+    {
+        return $this->price . ' P';
     }
 }

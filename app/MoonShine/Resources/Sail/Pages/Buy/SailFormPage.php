@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\MoonShine\Resources\Sail\Pages\Buy;
 
 use App\Enums\Car\CarType;
+use App\Enums\Sail\SailStatus;
 use App\Enums\Sail\SailType;
 use App\Models\Client;
 use App\MoonShine\Resources\Sail\SailBuyResource;
@@ -49,6 +50,9 @@ class SailFormPage extends FormPage
                 Tabs::make([
                     Tabs\Tab::make('Сделка', [
 
+                        Select::make('status', 'status')
+                            ->options(SailStatus::getValues()),
+
                         Hidden::make('type', 'type')
                             ->setValue(SailType::BUY->value)
                             ->required(),
@@ -65,20 +69,20 @@ class SailFormPage extends FormPage
                             ->multiple()
                             ->removable()
                             ->hint('Договор купли-продажи и сопутствующие документы')
-                            ->required()
+                            ->required(!$this->getItem()?->exists),
                     ]),
                     Tabs\Tab::make('Автомобиль', [
                         Select::make('Тип', 'car[type]')->options([
                             CarType::USED->value => 'Б/У',
                         ])->required(),
-                        Text::make('Марка', 'car[mark]')->required(),
-                        Text::make('Модель', 'car[model]')->required(),
-                        Number::make('Год', 'car[year]')->required(),
-                        Number::make('Пробег', 'car[mileage]')->required(),
-                        Text::make('VIN', 'car[vin_code]')->required(),
-                        Color::make('Цвет', 'car[color]')->required(),
-                        Image::make('Превью', 'car[preview]')->required(),
-                        Image::make('Изображения', 'car[files]')->multiple()->required(),
+                        Text::make('Марка', 'car.mark')->required(),
+                        Text::make('Модель', 'car.model')->required(),
+                        Number::make('Год', 'car.year')->required(),
+                        Number::make('Пробег', 'car.mileage')->required(),
+                        Text::make('VIN', 'car.vin_code')->required(),
+                        Color::make('Цвет', 'car.color')->required(),
+                        Image::make('Превью', 'car.preview')->required(!$this->getItem()?->exists),
+                        Image::make('Изображения', 'car.files')->multiple()->required(!$this->getItem()?->exists),
                     ])
                 ]),
             ]),

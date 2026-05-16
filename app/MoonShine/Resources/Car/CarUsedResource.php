@@ -16,6 +16,13 @@ class CarUsedResource extends AbstractCarResource
         return 'used';
     }
 
+    protected function search(): array
+    {
+        return [
+            'id'
+        ];
+    }
+
     protected function modifyQueryBuilder(Builder $builder): Builder
     {
         return $builder

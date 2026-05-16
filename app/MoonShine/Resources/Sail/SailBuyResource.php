@@ -31,6 +31,7 @@ class SailBuyResource extends ModelResource
         return [
             SailIndexPage::class,
             SailFormPage::class,
+            SailDetailPage::class,
         ];
     }
 
