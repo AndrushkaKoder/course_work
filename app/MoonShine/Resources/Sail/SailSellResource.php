@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\MoonShine\Resources\Sail;
 
-use App\Enums\Car\CarType;
 use App\Enums\Sail\SailType;
 use App\Models\Sail;
+use App\MoonShine\Resources\Sail\Pages\Sell\SailDetailPage;
 use App\MoonShine\Resources\Sail\Pages\Sell\SailFormPage;
 use App\MoonShine\Resources\Sail\Pages\Sell\SailIndexPage;
 use App\Services\SailService;
@@ -35,6 +35,7 @@ class SailSellResource extends ModelResource
         return [
             SailIndexPage::class,
             SailFormPage::class,
+            SailDetailPage::class,
         ];
     }
 

@@ -22,7 +22,7 @@ class Option extends Model
             Sail::class,
             'option_sale',
             'option_id',
-            'sale_id'
+            'sail_id'
         );
     }
 }

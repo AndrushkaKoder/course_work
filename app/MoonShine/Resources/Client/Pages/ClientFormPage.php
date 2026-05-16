@@ -31,7 +31,7 @@ class ClientFormPage extends FormPage
         return [
             Box::make([
                 Text::make('Имя', 'name'),
-                Text::make('Телефон', 'phone'),
+                Text::make('Телефон', 'phone')->mask('+7 (999) 999-99-99'),
             ]),
         ];
     }

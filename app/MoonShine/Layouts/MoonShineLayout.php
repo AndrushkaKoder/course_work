@@ -37,6 +37,7 @@ final class MoonShineLayout extends AppLayout
         return [
             ...parent::menu(),
             MenuItem::make(ClientResource::class, 'Клиенты'),
+            MenuItem::make(OptionResource::class, 'Доп.опции'),
             MenuGroup::make('Автомобили', [
                 MenuItem::make(CarNewResource::class, 'Новые'),
                 MenuItem::make(CarUsedResource::class, 'С пробегом'),
@@ -45,7 +46,6 @@ final class MoonShineLayout extends AppLayout
                 MenuItem::make(SailSellResource::class, 'Продажа'),
                 MenuItem::make(SailBuyResource::class, 'Покупка'),
             ]),
-            MenuItem::make(OptionResource::class, 'Доп.опции'),
         ];
     }
 

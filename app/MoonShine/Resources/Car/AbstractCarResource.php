@@ -28,12 +28,6 @@ class AbstractCarResource extends ModelResource
     {
         return [
             'id',
-            'model',
-            'mark',
-            'year',
-            'color',
-            'vin_code',
-            'state_number'
         ];
     }
 }

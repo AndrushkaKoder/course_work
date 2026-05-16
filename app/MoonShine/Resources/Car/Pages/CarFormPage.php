@@ -44,7 +44,7 @@ class CarFormPage extends FormPage
                 Text::make('VIN', 'vin_code'),
                 Color::make('Цвет', 'color'),
                 Image::make('Превью', 'preview'),
-                Image::make('Изображения', 'images')->multiple(),
+                Image::make('Изображения', 'files')->multiple(),
             ]),
         ];
     }

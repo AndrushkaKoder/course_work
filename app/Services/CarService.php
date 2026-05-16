@@ -9,6 +9,10 @@ use App\Models\Car;
 
 final class CarService
 {
+    /**
+     * @param CreateCarDto $dto
+     * @return Car
+     */
     public function createNewCar(CreateCarDto $dto): Car
     {
         $car = new Car();
@@ -32,5 +36,19 @@ final class CarService
         $car->save();
 
         return $car;
+    }
+
+    /**
+     * @param int $carId
+     * @return void
+     */
+    public function decrementCar(int $carId): void
+    {
+        Car::findOrFail($carId)->decrement('count');
+    }
+
+    public function incrementCar(int $carId): void
+    {
+        Car::findOrFail($carId)->increment('count');
     }
 }

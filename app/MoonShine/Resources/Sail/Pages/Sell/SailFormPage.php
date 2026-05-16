@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace App\MoonShine\Resources\Sail\Pages\Sell;
 
 use App\Enums\Car\CarType;
+use App\Enums\Sail\SailStatus;
+use App\Enums\Sail\SailType;
+use App\Models\Car;
 use App\Models\Client;
+use App\Models\Option;
 use App\MoonShine\Resources\Sail\SailBuyResource;
 use Illuminate\Container\EntryNotFoundException;
 use Illuminate\Contracts\Container\CircularDependencyException;
@@ -16,13 +20,10 @@ use MoonShine\Laravel\Pages\Crud\FormPage;
 use MoonShine\Support\ListOf;
 use MoonShine\UI\Components\FormBuilder;
 use MoonShine\UI\Components\Layout\Box;
-use MoonShine\UI\Components\Tabs;
-use MoonShine\UI\Fields\Color;
 use MoonShine\UI\Fields\File;
-use MoonShine\UI\Fields\Image;
+use MoonShine\UI\Fields\Hidden;
 use MoonShine\UI\Fields\Number;
 use MoonShine\UI\Fields\Select;
-use MoonShine\UI\Fields\Text;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Throwable;
@@ -42,25 +43,122 @@ class SailFormPage extends FormPage
      */
     protected function fields(): iterable
     {
+        $options = Option::query()
+            ->orderByDesc('id')
+            ->get();
+
+        $cars = Car::query()
+            ->where('type', CarType::NEW)
+            ->where('count', '>', 0)
+            ->orderByDesc('id')
+            ->get();
+
+        $optionsMap = $options->pluck('price', 'id')->toArray();
+        $optionsValues = $options->pluck('title', 'id')->toArray();
+        $carsPricesMap = [];
+
+        if ($this->resource->getItem()) {
+            $car = $this->resource->getItem()?->car;
+            $carsList[$car?->id] = $car?->getViewName();
+        } else {
+            $carsList = [null => 'Выберите автомобиль'];
+            foreach ($cars as $car) {
+                $carsList[$car->id] = $car->getViewName();
+                $carsPricesMap[$car->id] = $car->price;
+            }
+        }
+
         return [
             Box::make([
-                Tabs::make([
-                    Tabs\Tab::make('Сделка', [
-                        Select::make('Клиент', 'client_id')
-                            ->options(Client::query()->pluck('name', 'id')->toArray())
-                            ->searchable(),
-                        Number::make('Стоимость', 'price')->required(),
-                        File::make('Документы', 'files')
-                            ->multiple()
-                            ->removable()
-                            ->hint('Договор купли-продажи и сопутствующие документы')
+                Select::make('status', 'status')
+                    ->options(SailStatus::getValues()),
+
+                Hidden::make('type', 'type')
+                    ->setValue(SailType::SELL->value)
+                    ->required(),
+
+                Select::make('Автомобиль', 'car_id')
+                    ->options($carsList)
+                    ->searchable()
+                    ->required()
+                    ->customAttributes([
+                        'data-car-prices' => json_encode($carsPricesMap),
+                        'x-init' => "
+                        \$nextTick(() => {
+                            // Находим селект внутри обертки TomSelect/Choices
+                            let selectEl = \$el.querySelector('select') || \$el;
+                            let control = selectEl.tomselect || selectEl.choices;
+                            let priceInput = document.querySelector('input[name=\"price\"]');
+                            let carPrices = JSON.parse(selectEl.dataset.carPrices || '{}');
+
+                            if (!priceInput) return;
+
+                            let setCarPrice = (carId) => {
+                                // Просто берем цену из карты и затираем старое значение в инпуте
+                                priceInput.value = parseFloat(carPrices[carId]) || 0;
+                                priceInput.dispatchEvent(new Event('input', { bubbles: true }));
+                            };
+
+                            // Перехватываем выбор автомобиля (работает и для TomSelect, и для Choices)
+                            if (control && selectEl.tomselect) {
+                                control.on('change', (value) => setCarPrice(value));
+                            } else {
+                                selectEl.addEventListener('change', () => {
+                                    let value = control ? control.getValue() : selectEl.value;
+                                    setCarPrice(value);
+                                });
+                            }
+                        });
+                    "
                     ]),
-                    Tabs\Tab::make('Допы', [
-                    ])
-                ]),
+
+                Select::make('Клиент', 'client_id')
+                    ->options(Client::query()->pluck('name', 'id')->toArray())
+                    ->searchable(),
+
+                Number::make('Стоимость', 'price')->required(),
+
+                File::make('Документы', 'files')
+                    ->multiple()
+                    ->removable()
+                    ->hint('Договор купли-продажи и сопутствующие документы')
+                    ->required(!$this->getItem()?->exists),
+
+                Select::make('Список опций', 'options')
+                    ->options($optionsValues)
+                    ->searchable()
+                    ->multiple()
+                    ->customAttributes([
+                        'data-prices' => json_encode($optionsMap),
+                        'x-init' => "
+                        \$nextTick(() => {
+                            let selectEl = \$el.querySelector('select') || \$el;
+                            let control = selectEl.tomselect || selectEl.choices;
+                            let priceInput = document.querySelector('input[name=\"price\"]');
+                            let prices = JSON.parse(selectEl.dataset.prices || '{}');
+
+                            if (!priceInput) return;
+
+                            let modifyPrice = (amount) => {
+                                let currentPrice = parseFloat(priceInput.value) || 0;
+                                priceInput.value = Math.max(0, currentPrice + amount);
+                                priceInput.dispatchEvent(new Event('input', { bubbles: true }));
+                            };
+
+                            if (control && selectEl.tomselect) {
+                                control.on('item_add', (value) => modifyPrice(parseFloat(prices[value]) || 0));
+                                control.on('item_remove', (value) => modifyPrice(-parseFloat(prices[value]) || 0));
+                            } else {
+                                selectEl.addEventListener('addItem', (e) => modifyPrice(parseFloat(prices[e.detail.value]) || 0));
+                                selectEl.addEventListener('removeItem', (e) => modifyPrice(-parseFloat(prices[e.detail.value]) || 0));
+                            }
+                        });
+                    "
+                    ]),
             ]),
         ];
     }
+
 
     protected function buttons(): ListOf
     {
