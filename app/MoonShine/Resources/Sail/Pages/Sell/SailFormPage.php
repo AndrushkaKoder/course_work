@@ -2,34 +2,37 @@
 
 declare(strict_types=1);
 
-namespace App\MoonShine\Resources\Sail\Pages;
+namespace App\MoonShine\Resources\Sail\Pages\Sell;
 
-use App\Models\Car;
+use App\Enums\Car\CarType;
+use App\Models\Client;
+use App\MoonShine\Resources\Sail\SailBuyResource;
 use Illuminate\Container\EntryNotFoundException;
 use Illuminate\Contracts\Container\CircularDependencyException;
-use MoonShine\Laravel\Fields\Relationships\BelongsTo;
-use MoonShine\Laravel\Pages\Crud\FormPage;
+use MoonShine\Contracts\Core\TypeCasts\DataWrapperContract;
 use MoonShine\Contracts\UI\ComponentContract;
 use MoonShine\Contracts\UI\FormBuilderContract;
-use MoonShine\UI\Components\FormBuilder;
-use MoonShine\Contracts\UI\FieldContract;
-use MoonShine\Contracts\Core\TypeCasts\DataWrapperContract;
-use App\MoonShine\Resources\Sail\SailResource;
+use MoonShine\Laravel\Pages\Crud\FormPage;
 use MoonShine\Support\ListOf;
+use MoonShine\UI\Components\FormBuilder;
 use MoonShine\UI\Components\Layout\Box;
+use MoonShine\UI\Components\Tabs;
+use MoonShine\UI\Fields\Color;
+use MoonShine\UI\Fields\File;
+use MoonShine\UI\Fields\Image;
 use MoonShine\UI\Fields\Number;
 use MoonShine\UI\Fields\Select;
+use MoonShine\UI\Fields\Text;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Throwable;
 
 
 /**
- * @extends FormPage<SailResource>
+ * @extends FormPage<SailBuyResource>
  */
 class SailFormPage extends FormPage
 {
-
     /**
      * @return iterable
      * @throws EntryNotFoundException
@@ -39,24 +42,22 @@ class SailFormPage extends FormPage
      */
     protected function fields(): iterable
     {
-        $car = Car::query()->find(request()->get('car_id'));
-
-        if (!$car) {
-            abort(403, 'Выберите автомобиль для сделки');
-        }
-
         return [
             Box::make([
-                BelongsTo::make('Клиент', 'client', 'name')
-                    ->nullable()
-                    ->searchable()
-                    ->placeholder('Выбрать клиента'),
-                Select::make('Автомобиль', 'car_id')
-                    ->options([
-                        request()->car_id => $car->getViewName(),
+                Tabs::make([
+                    Tabs\Tab::make('Сделка', [
+                        Select::make('Клиент', 'client_id')
+                            ->options(Client::query()->pluck('name', 'id')->toArray())
+                            ->searchable(),
+                        Number::make('Стоимость', 'price')->required(),
+                        File::make('Документы', 'files')
+                            ->multiple()
+                            ->removable()
+                            ->hint('Договор купли-продажи и сопутствующие документы')
                     ]),
-                Number::make('Цена', 'price')
-                ->default($car->price)
+                    Tabs\Tab::make('Допы', [
+                    ])
+                ]),
             ]),
         ];
     }

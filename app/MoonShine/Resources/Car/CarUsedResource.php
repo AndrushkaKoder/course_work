@@ -18,6 +18,8 @@ class CarUsedResource extends AbstractCarResource
 
     protected function modifyQueryBuilder(Builder $builder): Builder
     {
-        return $builder->where('type', CarType::USED);
+        return $builder
+            ->where('count', '>', 0)
+            ->where('type', CarType::USED);
     }
 }

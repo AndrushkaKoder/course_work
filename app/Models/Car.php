@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\Car\CarType;
+use App\Traits\Fileable;
 use Eloquent;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -26,6 +27,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property string|null $deleted_at
+ * @property int|null $mileage
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Car newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Car newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Car query()
@@ -37,6 +39,7 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Car whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Car whereImages($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Car whereMark($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Car whereMileage($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Car whereModel($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Car wherePreview($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Car wherePrice($value)
@@ -49,6 +52,8 @@ use Illuminate\Support\Carbon;
  */
 class Car extends Model
 {
+    use Fileable;
+
     protected $table = 'cars';
 
     protected $fillable = [
@@ -64,10 +69,12 @@ class Car extends Model
         'state_number',
         'preview',
         'images',
+        'mileage',
     ];
 
     protected $casts = [
-        'type' => CarType::class
+        'type' => CarType::class,
+        'files' => 'array',
     ];
 
     public function getViewName(): string

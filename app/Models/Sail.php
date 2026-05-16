@@ -6,8 +6,11 @@ namespace App\Models;
 
 use App\Enums\Sail\SailStatus;
 use App\Enums\Sail\SailType;
+use App\Traits\Fileable;
+use Eloquent;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
@@ -17,27 +20,31 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int|null $price
  * @property SailStatus $status
  * @property SailType $type
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Car|null $car
- * @property-read \App\Models\Client|null $client
- * @property-read \App\Models\User|null $user
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property array<array-key, mixed>|null $files
+ * @property-read Car|null $car
+ * @property-read Client|null $client
+ * @property-read User|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Sail newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Sail newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Sail query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Sail whereCarId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Sail whereClientId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Sail whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sail whereFiles($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Sail whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Sail wherePrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Sail whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Sail whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Sail whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Sail whereUserId($value)
- * @mixin \Eloquent
+ * @mixin Eloquent
  */
 class Sail extends Model
 {
+    use Fileable;
+
     protected $table = 'sails';
 
     protected $fillable = [
@@ -47,11 +54,13 @@ class Sail extends Model
         'price',
         'status',
         'type',
+        'files'
     ];
 
     protected $casts = [
         'status' => SailStatus::class,
         'type' => SailType::class,
+        'files' => 'array'
     ];
 
     public function user(): BelongsTo
@@ -67,5 +76,10 @@ class Sail extends Model
     public function client(): BelongsTo
     {
         return $this->belongsTo(Client::class, 'client_id');
+    }
+
+    public function getFiles(): array
+    {
+        return $this->files;
     }
 }

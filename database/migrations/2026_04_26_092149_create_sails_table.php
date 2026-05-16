@@ -26,7 +26,7 @@ return new class extends Migration {
 
             $table->foreign('user_id')
                 ->references('id')
-                ->on('users')
+                ->on('moonshine_users')
                 ->onDelete('set null');
 
             $table->foreign('car_id')

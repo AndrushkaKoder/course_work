@@ -5,16 +5,17 @@ declare(strict_types=1);
 namespace App\MoonShine\Layouts;
 
 use App\MoonShine\Resources\Car\CarNewResource;
+use App\MoonShine\Resources\Car\CarUsedResource;
+use App\MoonShine\Resources\Client\ClientResource;
+use App\MoonShine\Resources\Sail\SailBuyResource;
+use App\MoonShine\Resources\Sail\SailSellResource;
 use MoonShine\Laravel\Layouts\AppLayout;
 use MoonShine\ColorManager\Palettes\PurplePalette;
 use MoonShine\ColorManager\ColorManager;
 use MoonShine\Contracts\ColorManager\ColorManagerContract;
 use MoonShine\Contracts\ColorManager\PaletteContract;
-use App\MoonShine\Resources\Car\CarUsedResource;
 use MoonShine\MenuManager\MenuGroup;
 use MoonShine\MenuManager\MenuItem;
-use App\MoonShine\Resources\Sail\SailResource;
-use App\MoonShine\Resources\Client\ClientResource;
 
 final class MoonShineLayout extends AppLayout
 {
@@ -39,7 +40,10 @@ final class MoonShineLayout extends AppLayout
                 MenuItem::make(CarUsedResource::class, 'С пробегом'),
             ]),
             MenuItem::make(ClientResource::class, 'Клиенты'),
-            MenuItem::make(SailResource::class, 'Сделки'),
+            MenuGroup::make('Сделки', [
+                MenuItem::make(SailSellResource::class, 'Продажа'),
+                MenuItem::make(SailBuyResource::class, 'Покупка'),
+            ]),
         ];
     }
 

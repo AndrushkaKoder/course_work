@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace App\MoonShine\Resources\Sail\Pages;
+namespace App\MoonShine\Resources\Sail\Pages\Sell;
 
+use App\MoonShine\Resources\Sail\SailBuyResource;
 use MoonShine\Contracts\UI\ActionButtonContract;
-use MoonShine\Laravel\Pages\Crud\IndexPage;
 use MoonShine\Contracts\UI\ComponentContract;
-use MoonShine\UI\Components\Table\TableBuilder;
 use MoonShine\Contracts\UI\FieldContract;
+use MoonShine\Laravel\Pages\Crud\IndexPage;
 use MoonShine\Laravel\QueryTags\QueryTag;
-use MoonShine\UI\Components\Metrics\Wrapped\Metric;
-use MoonShine\UI\Fields\ID;
-use App\MoonShine\Resources\Sail\SailResource;
 use MoonShine\Support\ListOf;
+use MoonShine\UI\Components\Metrics\Wrapped\Metric;
+use MoonShine\UI\Components\Table\TableBuilder;
+use MoonShine\UI\Fields\ID;
 use Throwable;
 
 /**
- * @extends IndexPage<SailResource>
+ * @extends IndexPage<SailBuyResource>
  */
 class SailIndexPage extends IndexPage
 {
@@ -106,10 +106,5 @@ class SailIndexPage extends IndexPage
         return [
             ...parent::bottomLayer()
         ];
-    }
-
-    protected function modifyCreateButton(ActionButtonContract $button): ActionButtonContract
-    {
-        return $button->canSee(fn() => false);
     }
 }
