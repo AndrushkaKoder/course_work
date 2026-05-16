@@ -4,25 +4,22 @@ declare(strict_types=1);
 
 namespace App\MoonShine\Resources\Car\Pages;
 
-use App\Enums\Car\CarType;
 use App\Models\Car;
+use App\MoonShine\Resources\Car\CarUsedResource;
 use MoonShine\Contracts\UI\ActionButtonContract;
-use MoonShine\Laravel\Pages\Crud\IndexPage;
 use MoonShine\Contracts\UI\ComponentContract;
-use MoonShine\UI\Components\ActionButton;
-use MoonShine\UI\Components\Table\TableBuilder;
 use MoonShine\Contracts\UI\FieldContract;
+use MoonShine\Laravel\Pages\Crud\IndexPage;
 use MoonShine\Laravel\QueryTags\QueryTag;
+use MoonShine\Support\ListOf;
 use MoonShine\UI\Components\Metrics\Wrapped\Metric;
+use MoonShine\UI\Components\Table\TableBuilder;
 use MoonShine\UI\Fields\Color;
 use MoonShine\UI\Fields\ID;
-use App\MoonShine\Resources\Car\CarUsedResource;
-use MoonShine\Support\ListOf;
 use MoonShine\UI\Fields\Image;
 use MoonShine\UI\Fields\Number;
 use MoonShine\UI\Fields\Text;
 use Throwable;
-
 
 /**
  * @extends IndexPage<CarUsedResource>
@@ -41,7 +38,7 @@ class CarIndexPage extends IndexPage
             Image::make('Превью', 'preview'),
             Text::make('Модель', 'model'),
             Text::make('Марка', 'mark'),
-            Text::make('Цена', 'price', fn(Car $car) => $car->getViewPrice()),
+            Text::make('Цена', 'price', fn (Car $car) => $car->getViewPrice()),
             Text::make('Год', 'year'),
             Text::make('VIN', 'vin_code'),
             Color::make('Цвет', 'color'),
@@ -84,8 +81,7 @@ class CarIndexPage extends IndexPage
     }
 
     /**
-     * @param TableBuilder $component
-     *
+     * @param  TableBuilder  $component
      * @return TableBuilder
      */
     protected function modifyListComponent(ComponentContract $component): ComponentContract
@@ -95,35 +91,37 @@ class CarIndexPage extends IndexPage
 
     /**
      * @return list<ComponentContract>
+     *
      * @throws Throwable
      */
     protected function topLayer(): array
     {
         return [
-            ...parent::topLayer()
+            ...parent::topLayer(),
         ];
     }
 
     /**
      * @return list<ComponentContract>
+     *
      * @throws Throwable
      */
     protected function mainLayer(): array
     {
         return [
-            ...parent::mainLayer()
+            ...parent::mainLayer(),
         ];
     }
 
     /**
      * @return list<ComponentContract>
+     *
      * @throws Throwable
      */
     protected function bottomLayer(): array
     {
         return [
-            ...parent::bottomLayer()
+            ...parent::bottomLayer(),
         ];
     }
-
 }

@@ -30,14 +30,12 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Throwable;
 
-
 /**
  * @extends FormPage<SailBuyResource>
  */
 class SailFormPage extends FormPage
 {
     /**
-     * @return iterable
      * @throws EntryNotFoundException
      * @throws CircularDependencyException
      * @throws ContainerExceptionInterface
@@ -69,7 +67,7 @@ class SailFormPage extends FormPage
                             ->multiple()
                             ->removable()
                             ->hint('Договор купли-продажи и сопутствующие документы')
-                            ->required(!$this->getItem()?->exists),
+                            ->required(! $this->getItem()?->exists),
                     ]),
                     Tabs\Tab::make('Автомобиль', [
                         Select::make('Тип', 'car[type]')->options([
@@ -81,9 +79,9 @@ class SailFormPage extends FormPage
                         Number::make('Пробег', 'car.mileage')->required(),
                         Text::make('VIN', 'car.vin_code')->required(),
                         Color::make('Цвет', 'car.color')->required(),
-                        Image::make('Превью', 'car.preview')->required(!$this->getItem()?->exists),
-                        Image::make('Изображения', 'car.files')->multiple()->required(!$this->getItem()?->exists),
-                    ])
+                        Image::make('Превью', 'car.preview')->required(! $this->getItem()?->exists),
+                        Image::make('Изображения', 'car.files')->multiple()->required(! $this->getItem()?->exists),
+                    ]),
                 ]),
             ]),
         ];
@@ -105,8 +103,7 @@ class SailFormPage extends FormPage
     }
 
     /**
-     * @param FormBuilder $component
-     *
+     * @param  FormBuilder  $component
      * @return FormBuilder
      */
     protected function modifyFormComponent(FormBuilderContract $component): FormBuilderContract
@@ -116,34 +113,37 @@ class SailFormPage extends FormPage
 
     /**
      * @return list<ComponentContract>
+     *
      * @throws Throwable
      */
     protected function topLayer(): array
     {
         return [
-            ...parent::topLayer()
+            ...parent::topLayer(),
         ];
     }
 
     /**
      * @return list<ComponentContract>
+     *
      * @throws Throwable
      */
     protected function mainLayer(): array
     {
         return [
-            ...parent::mainLayer()
+            ...parent::mainLayer(),
         ];
     }
 
     /**
      * @return list<ComponentContract>
+     *
      * @throws Throwable
      */
     protected function bottomLayer(): array
     {
         return [
-            ...parent::bottomLayer()
+            ...parent::bottomLayer(),
         ];
     }
 }

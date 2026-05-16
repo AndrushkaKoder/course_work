@@ -19,7 +19,7 @@ class CarUsedResource extends AbstractCarResource
     protected function search(): array
     {
         return [
-            'id'
+            'id',
         ];
     }
 

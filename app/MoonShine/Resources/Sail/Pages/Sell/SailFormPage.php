@@ -28,14 +28,12 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Throwable;
 
-
 /**
  * @extends FormPage<SailBuyResource>
  */
 class SailFormPage extends FormPage
 {
     /**
-     * @return iterable
      * @throws EntryNotFoundException
      * @throws CircularDependencyException
      * @throws ContainerExceptionInterface
@@ -109,7 +107,7 @@ class SailFormPage extends FormPage
                                 });
                             }
                         });
-                    "
+                    ",
                     ]),
 
                 Select::make('Клиент', 'client_id')
@@ -122,7 +120,7 @@ class SailFormPage extends FormPage
                     ->multiple()
                     ->removable()
                     ->hint('Договор купли-продажи и сопутствующие документы')
-                    ->required(!$this->getItem()?->exists),
+                    ->required(! $this->getItem()?->exists),
 
                 Select::make('Список опций', 'options')
                     ->options($optionsValues)
@@ -153,12 +151,11 @@ class SailFormPage extends FormPage
                                 selectEl.addEventListener('removeItem', (e) => modifyPrice(-parseFloat(prices[e.detail.value]) || 0));
                             }
                         });
-                    "
+                    ",
                     ]),
             ]),
         ];
     }
-
 
     protected function buttons(): ListOf
     {
@@ -176,8 +173,7 @@ class SailFormPage extends FormPage
     }
 
     /**
-     * @param FormBuilder $component
-     *
+     * @param  FormBuilder  $component
      * @return FormBuilder
      */
     protected function modifyFormComponent(FormBuilderContract $component): FormBuilderContract
@@ -187,34 +183,37 @@ class SailFormPage extends FormPage
 
     /**
      * @return list<ComponentContract>
+     *
      * @throws Throwable
      */
     protected function topLayer(): array
     {
         return [
-            ...parent::topLayer()
+            ...parent::topLayer(),
         ];
     }
 
     /**
      * @return list<ComponentContract>
+     *
      * @throws Throwable
      */
     protected function mainLayer(): array
     {
         return [
-            ...parent::mainLayer()
+            ...parent::mainLayer(),
         ];
     }
 
     /**
      * @return list<ComponentContract>
+     *
      * @throws Throwable
      */
     protected function bottomLayer(): array
     {
         return [
-            ...parent::bottomLayer()
+            ...parent::bottomLayer(),
         ];
     }
 }

@@ -7,16 +7,16 @@ namespace App\MoonShine\Layouts;
 use App\MoonShine\Resources\Car\CarNewResource;
 use App\MoonShine\Resources\Car\CarUsedResource;
 use App\MoonShine\Resources\Client\ClientResource;
+use App\MoonShine\Resources\Option\OptionResource;
 use App\MoonShine\Resources\Sail\SailBuyResource;
 use App\MoonShine\Resources\Sail\SailSellResource;
-use MoonShine\Laravel\Layouts\AppLayout;
-use MoonShine\ColorManager\Palettes\PurplePalette;
 use MoonShine\ColorManager\ColorManager;
+use MoonShine\ColorManager\Palettes\PurplePalette;
 use MoonShine\Contracts\ColorManager\ColorManagerContract;
 use MoonShine\Contracts\ColorManager\PaletteContract;
+use MoonShine\Laravel\Layouts\AppLayout;
 use MoonShine\MenuManager\MenuGroup;
 use MoonShine\MenuManager\MenuItem;
-use App\MoonShine\Resources\Option\OptionResource;
 
 final class MoonShineLayout extends AppLayout
 {
@@ -50,7 +50,7 @@ final class MoonShineLayout extends AppLayout
     }
 
     /**
-     * @param ColorManager $colorManager
+     * @param  ColorManager  $colorManager
      */
     protected function colors(ColorManagerContract $colorManager): void
     {

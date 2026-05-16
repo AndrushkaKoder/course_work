@@ -15,7 +15,7 @@ enum SailStatus: int
         return [
             self::PENDING->value => 'Подготовка',
             self::COMPLETED->value => 'Завершена',
-            self::CANCELLED->value => 'Отменена'
+            self::CANCELLED->value => 'Отменена',
         ];
     }
 

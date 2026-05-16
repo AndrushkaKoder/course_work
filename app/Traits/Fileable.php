@@ -8,10 +8,6 @@ use Illuminate\Http\UploadedFile;
 
 trait Fileable
 {
-    /**
-     * @param UploadedFile $preview
-     * @return void
-     */
     public function addPreview(UploadedFile $preview): void
     {
         if ($preview->isValid()) {
@@ -20,8 +16,7 @@ trait Fileable
     }
 
     /**
-     * @param array<UploadedFile> $files
-     * @return void
+     * @param  array<UploadedFile>  $files
      */
     public function addMultiple(array $files): void
     {

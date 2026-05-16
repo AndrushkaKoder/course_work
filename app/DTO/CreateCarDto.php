@@ -6,7 +6,5 @@ namespace App\DTO;
 
 final readonly class CreateCarDto
 {
-    public function __construct(public array $data, public int|string $price)
-    {
-    }
+    public function __construct(public array $data, public int|string $price) {}
 }

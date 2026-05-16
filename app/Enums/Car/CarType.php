@@ -18,9 +18,8 @@ enum CarType: int
     {
         return [
             self::NEW->value => 'Новый',
-            self::USED->value => 'Б/У'
+            self::USED->value => 'Б/У',
 
         ];
     }
-
 }

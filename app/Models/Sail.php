@@ -28,6 +28,7 @@ use MoonShine\Laravel\Models\MoonshineUser;
  * @property-read Car|null $car
  * @property-read Client|null $client
  * @property-read User|null $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Sail newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Sail newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Sail query()
@@ -41,6 +42,7 @@ use MoonShine\Laravel\Models\MoonshineUser;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Sail whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Sail whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Sail whereUserId($value)
+ *
  * @mixin Eloquent
  */
 class Sail extends Model
@@ -56,12 +58,12 @@ class Sail extends Model
         'price',
         'status',
         'type',
-        'files'
+        'files',
     ];
 
     protected $casts = [
         'status' => SailStatus::class,
-        'files' => 'array'
+        'files' => 'array',
     ];
 
     public function user(): BelongsTo
@@ -96,6 +98,6 @@ class Sail extends Model
 
     public function formattedPrice(): string
     {
-        return $this->price . ' P';
+        return $this->price.' P';
     }
 }

@@ -28,6 +28,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property string|null $deleted_at
  * @property int|null $mileage
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Car newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Car newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Car query()
@@ -48,6 +49,7 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Car whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Car whereVinCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Car whereYear($value)
+ *
  * @mixin Eloquent
  */
 class Car extends Model
@@ -84,7 +86,7 @@ class Car extends Model
 
     public function getViewPrice(): string
     {
-        $pr = (string)$this->price;
+        $pr = (string) $this->price;
 
         $val1 = substr($pr, 0, 3);
         $val2 = substr($pr, 3, 6);

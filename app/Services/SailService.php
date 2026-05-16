@@ -25,14 +25,9 @@ final readonly class SailService
         'type',
     ];
 
-    public function __construct(private CarService $carService)
-    {
-    }
+    public function __construct(private CarService $carService) {}
 
     /**
-     * @param Sail|null $sail
-     * @param array $data
-     * @return Sail
      * @throws Throwable
      */
     public function updateOrCreate(?Sail $sail, array $data): Sail
@@ -40,14 +35,9 @@ final readonly class SailService
         return $sail->exists ? $this->update($sail, $data) : $this->create($data);
     }
 
-    /**
-     * @param Sail $sail
-     * @param array $data
-     * @return Sail
-     */
     private function update(Sail $sail, array $data): Sail
     {
-        $this->writeOffCar($sail, SailStatus::tryFrom((int)$data['status']));
+        $this->writeOffCar($sail, SailStatus::tryFrom((int) $data['status']));
         $attributes = array_intersect_key($data, array_flip(self::ATTRIBUTE_KEYS));
 
         if ($attributes !== []) {
@@ -58,13 +48,11 @@ final readonly class SailService
     }
 
     /**
-     * @param array $data
-     * @return Sail
      * @throws Throwable
      */
     private function create(array $data): Sail
     {
-        return match (SailType::tryFrom((int)$data['type'])) {
+        return match (SailType::tryFrom((int) $data['type'])) {
             SailType::BUY => $this->createBuySail($data),
             SailType::SELL => $this->createSellSail($data),
             default => throw new Exception('Незивестный тип сделки')
@@ -72,26 +60,22 @@ final readonly class SailService
     }
 
     /**
-     * @param array $data
-     * @return Sail
      * @throws Throwable
      */
     private function createSellSail(array $data): Sail
     {
-        if (!isset($data['car_id'])) {
+        if (! isset($data['car_id'])) {
             throw new Exception('Выберите автомобиль');
         }
 
         return DB::transaction(function () use ($data) {
-            $this->writeOffCar(null, SailStatus::tryFrom((int)$data['status']));
+            $this->writeOffCar(null, SailStatus::tryFrom((int) $data['status']));
 
             return $this->createSail($data);
         });
     }
 
     /**
-     * @param array $data
-     * @return Sail
      * @throws Throwable
      */
     private function createBuySail(array $data): Sail
@@ -107,7 +91,7 @@ final readonly class SailService
 
     private function createSail(array $data, ?Car $car = null): Sail
     {
-        $sail = new Sail();
+        $sail = new Sail;
         $sail->status = $data['status'];
         $sail->car_id = $data['car_id'] ?? $car->id;
         $sail->client_id = $data['client_id'];

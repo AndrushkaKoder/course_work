@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace App\MoonShine\Resources\Client;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Models\Client;
-use App\MoonShine\Resources\Client\Pages\ClientIndexPage;
-use App\MoonShine\Resources\Client\Pages\ClientFormPage;
 use App\MoonShine\Resources\Client\Pages\ClientDetailPage;
-
-use MoonShine\Laravel\Resources\ModelResource;
+use App\MoonShine\Resources\Client\Pages\ClientFormPage;
+use App\MoonShine\Resources\Client\Pages\ClientIndexPage;
 use MoonShine\Contracts\Core\PageContract;
+use MoonShine\Laravel\Resources\ModelResource;
 
 /**
  * @extends ModelResource<Client, ClientIndexPage, ClientFormPage, ClientDetailPage>

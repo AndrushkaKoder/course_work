@@ -17,7 +17,6 @@ use MoonShine\UI\Components\Metrics\Wrapped\Metric;
 use MoonShine\UI\Components\Table\TableBuilder;
 use MoonShine\UI\Fields\Date;
 use MoonShine\UI\Fields\ID;
-use MoonShine\UI\Fields\Preview;
 use MoonShine\UI\Fields\Text;
 use Throwable;
 
@@ -38,7 +37,7 @@ class SailIndexPage extends IndexPage
             Text::make('Статус', 'status', function ($item) {
                 return $item->status->formattedValue();
             })
-                ->badge(fn($value, $field) => match ($field->getData()->status) {
+                ->badge(fn ($value, $field) => match ($field->getData()->status) {
                     SailStatus::PENDING => 'warning',
                     SailStatus::COMPLETED => 'success',
                     SailStatus::CANCELLED => 'error',
@@ -48,9 +47,9 @@ class SailIndexPage extends IndexPage
             Text::make('Автомобиль', 'car', function (Sail $s) {
                 return $s->car->getViewName();
             }),
-            Text::make('Сумма', 'price', fn(Sail $s) => $s->formattedPrice()),
-            Text::make('Клиент', 'client.name', fn(Sail $s) => "{$s->client->name} ({$s->client_id})"),
-            Text::make('Продавец', 'user.name', fn(Sail $s) => "{$s->user->name} ({$s->user_id})"),
+            Text::make('Сумма', 'price', fn (Sail $s) => $s->formattedPrice()),
+            Text::make('Клиент', 'client.name', fn (Sail $s) => "{$s->client->name} ({$s->client_id})"),
+            Text::make('Продавец', 'user.name', fn (Sail $s) => "{$s->user->name} ({$s->user_id})"),
         ];
     }
 
@@ -87,8 +86,7 @@ class SailIndexPage extends IndexPage
     }
 
     /**
-     * @param TableBuilder $component
-     *
+     * @param  TableBuilder  $component
      * @return TableBuilder
      */
     protected function modifyListComponent(ComponentContract $component): ComponentContract
@@ -98,34 +96,37 @@ class SailIndexPage extends IndexPage
 
     /**
      * @return list<ComponentContract>
+     *
      * @throws Throwable
      */
     protected function topLayer(): array
     {
         return [
-            ...parent::topLayer()
+            ...parent::topLayer(),
         ];
     }
 
     /**
      * @return list<ComponentContract>
+     *
      * @throws Throwable
      */
     protected function mainLayer(): array
     {
         return [
-            ...parent::mainLayer()
+            ...parent::mainLayer(),
         ];
     }
 
     /**
      * @return list<ComponentContract>
+     *
      * @throws Throwable
      */
     protected function bottomLayer(): array
     {
         return [
-            ...parent::bottomLayer()
+            ...parent::bottomLayer(),
         ];
     }
 }

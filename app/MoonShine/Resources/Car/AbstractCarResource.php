@@ -2,7 +2,6 @@
 
 namespace App\MoonShine\Resources\Car;
 
-use App\Enums\Car\CarType;
 use App\Models\Car;
 use App\MoonShine\Resources\Car\Pages\CarFormPage;
 use App\MoonShine\Resources\Car\Pages\CarIndexPage;
@@ -20,7 +19,7 @@ class AbstractCarResource extends ModelResource
     {
         return [
             CarIndexPage::class,
-            CarFormPage::class
+            CarFormPage::class,
         ];
     }
 

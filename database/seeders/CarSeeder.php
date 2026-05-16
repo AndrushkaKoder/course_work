@@ -6,11 +6,7 @@ use Illuminate\Database\Seeder;
 
 class CarSeeder extends Seeder
 {
-    public function run(): void
-    {
-
-    }
-
+    public function run(): void {}
 
     private function data(): array
     {

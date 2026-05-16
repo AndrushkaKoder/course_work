@@ -13,7 +13,7 @@ enum SailType: int
     {
         return [
             self::BUY->value => 'Покупка',
-            self::SELL->value => 'Продажа'
+            self::SELL->value => 'Продажа',
         ];
     }
 }

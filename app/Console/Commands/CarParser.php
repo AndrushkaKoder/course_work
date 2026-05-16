@@ -33,7 +33,7 @@ class CarParser extends Command
 
         foreach ($cars as $car) {
             $stateNumber = $car['type'] === CarType::USED->value ? Str::random(10) : null;
-            $newCar = new Car();
+            $newCar = new Car;
 
             $newCar->mark = $car['mark'];
             $newCar->model = $car['model'];
