@@ -33,10 +33,9 @@ class OptionFormPage extends FormPage
         return [
             Box::make([
                 ID::make(),
-                Text::make('Название', 'title'),
-                Number::make('Цена', 'price'),
-                Number::make('Количество', 'count'),
-                Image::make('Фото', 'preview'),
+                Text::make('Название', 'title')->required(),
+                Number::make('Цена', 'price')->required(),
+                Image::make('Фото', 'preview')->required(),
             ]),
         ];
     }

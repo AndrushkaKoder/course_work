@@ -13,6 +13,7 @@ use MoonShine\UI\Components\Metrics\Wrapped\Metric;
 use MoonShine\UI\Fields\ID;
 use App\MoonShine\Resources\Option\OptionResource;
 use MoonShine\Support\ListOf;
+use MoonShine\UI\Fields\Image;
 use MoonShine\UI\Fields\Preview;
 use MoonShine\UI\Fields\Text;
 use Throwable;
@@ -32,10 +33,9 @@ class OptionIndexPage extends IndexPage
     {
         return [
             ID::make(),
-            Preview::make('Фото', 'preview')->image(),
+            Image::make('Превью', 'preview'),
             Text::make('Название', 'title'),
             Text::make('Цена', 'price'),
-            Text::make('Количество', 'count'),
         ];
     }
 

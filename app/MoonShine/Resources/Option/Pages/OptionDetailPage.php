@@ -11,6 +11,8 @@ use MoonShine\Contracts\UI\FieldContract;
 use App\MoonShine\Resources\Option\OptionResource;
 use MoonShine\Support\ListOf;
 use MoonShine\UI\Fields\ID;
+use MoonShine\UI\Fields\Image;
+use MoonShine\UI\Fields\Text;
 use Throwable;
 
 
@@ -26,6 +28,9 @@ class OptionDetailPage extends DetailPage
     {
         return [
             ID::make(),
+            Image::make('Превью', 'preview'),
+            Text::make('Название', 'title'),
+            Text::make('Цена', 'price'),
         ];
     }
 
