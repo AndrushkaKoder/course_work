@@ -5,7 +5,6 @@ up:
 	$(compose) exec app php artisan migrate --force
 	$(compose) exec app php artisan optimize:clear
 
-
 down:
 	$(compose) down
 
