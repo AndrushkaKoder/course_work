@@ -22,7 +22,7 @@ docs:
 	$(sail) php artisan l5-swagger:generate
 
 test:
-	$(sail) php artisan test --parallel
+	$(sail) php artisan test
 
 dockblock:
 	$(sail) php artisan ide-helper:models -RW
