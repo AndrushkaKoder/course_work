@@ -61,7 +61,6 @@ jobs:
           ssh -i "$deploy_key" -o BatchMode=yes -o StrictHostKeyChecking=yes \
             "${DEPLOY_USER}@${DEPLOY_HOST}" bash -l -s <<REMOTE_SCRIPT
           set -euo pipefail
-          cd "${DEPLOY_PATH}"
 
           if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
             COMPOSE="docker compose"
@@ -72,19 +71,23 @@ jobs:
             exit 127
           fi
 
-          git config --global --add safe.directory "${DEPLOY_PATH}"
+          # root deploys after chown 1000:1000 — allow git in the project dir (any path)
+          git config --global --add safe.directory '*'
+
+          cd "${DEPLOY_PATH}"
+          git config --global --add safe.directory "$(pwd)"
 
           git fetch origin
           git checkout "${DEPLOY_BRANCH}"
           git pull --ff-only origin "${DEPLOY_BRANCH}"
 
-          # app container runs as UID 1000 (see compose.yml); root-owned files break composer/vendor
-          chown -R 1000:1000 "${DEPLOY_PATH}"
-          chmod -R ug+rwx "${DEPLOY_PATH}/storage" "${DEPLOY_PATH}/bootstrap/cache" 2>/dev/null || true
+          # app container runs as UID 1000 (see compose.yml)
+          chown -R 1000:1000 "$(pwd)"
+          chmod -R ug+rwx storage bootstrap/cache 2>/dev/null || true
 
           \$COMPOSE up -d
 
-          \$COMPOSE exec -T -u root app git config --global --add safe.directory /var/www
+          \$COMPOSE exec -T -u root app git config --global --add safe.directory '*'
           \$COMPOSE exec -T app composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
           \$COMPOSE exec -T app php artisan migrate --force
           \$COMPOSE exec -T app php artisan optimize:clear
