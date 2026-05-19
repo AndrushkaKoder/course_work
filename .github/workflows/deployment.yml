@@ -75,14 +75,14 @@ jobs:
           git config --global --add safe.directory '*'
 
           cd "${DEPLOY_PATH}"
-          git config --global --add safe.directory "$(pwd)"
+          git config --global --add safe.directory "${DEPLOY_PATH}"
 
           git fetch origin
           git checkout "${DEPLOY_BRANCH}"
           git pull --ff-only origin "${DEPLOY_BRANCH}"
 
           # app container runs as UID 1000 (see compose.yml)
-          chown -R 1000:1000 "$(pwd)"
+          chown -R 1000:1000 "${DEPLOY_PATH}"
           chmod -R ug+rwx storage bootstrap/cache 2>/dev/null || true
 
           \$COMPOSE up -d
