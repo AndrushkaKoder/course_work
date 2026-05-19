@@ -99,10 +99,6 @@ final readonly class SailService
         $sail->type = $data['type'];
         $sail->price = $data['price'];
 
-        if (isset($data['preview'])) {
-            $sail->addPreview($data['preview']);
-        }
-
         if (isset($data['files'])) {
             $sail->addMultiple($data['files']);
         }

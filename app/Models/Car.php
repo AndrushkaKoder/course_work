@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Enums\Car\CarType;
 use App\Traits\Fileable;
+use App\Traits\HasPreview;
 use Eloquent;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -54,7 +55,7 @@ use Illuminate\Support\Carbon;
  */
 class Car extends Model
 {
-    use Fileable;
+    use Fileable, HasPreview;
 
     protected $table = 'cars';
 

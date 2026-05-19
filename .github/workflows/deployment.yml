@@ -1,0 +1,44 @@
+name: Deployment
+
+on:
+  workflow_run:
+    workflows: [Test]
+    types: [completed]
+    branches: [main, master]
+  workflow_dispatch:
+
+concurrency:
+  group: deployment-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to server
+    runs-on: ubuntu-latest
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push')
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script_stop: true
+          script: |
+            set -euo pipefail
+            cd "${{ secrets.DEPLOY_PATH }}"
+            BRANCH="${{ github.event.workflow_run.head_branch || github.ref_name }}"
+            git fetch origin
+            git checkout "$BRANCH"
+            git pull --ff-only origin "$BRANCH"
+            composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
+            php artisan migrate --force
+            php artisan optimize:clear
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+            npm ci --ignore-scripts
+            npm run build

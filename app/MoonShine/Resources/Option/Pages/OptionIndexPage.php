@@ -37,7 +37,6 @@ class OptionIndexPage extends IndexPage
         ];
     }
 
-
     protected function buttons(): ListOf
     {
         return parent::buttons();

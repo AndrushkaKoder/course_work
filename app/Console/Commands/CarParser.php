@@ -17,26 +17,24 @@ class CarParser extends Command
 {
     public function handle(): void
     {
-//        if (Car::count()) {
-//            $this->error('Список машин уже заполнен');
-//
-//            return;
-//        }
+        //        if (Car::count()) {
+        //            $this->error('Список машин уже заполнен');
+        //
+        //            return;
+        //        }
 
         $response = Http::post('https://cars.lego-car.ru/api/v1/filter/', [
-//            'page' => 2,
+            //            'page' => 2,
             'car_type' => [
-                0 => 'c пробегом'
+                0 => 'c пробегом',
             ],
             'opened' => [
                 0 => 'car_type',
-                1 => 'brand'
-            ]
+                1 => 'brand',
+            ],
         ])->json();
 
-        dd($response);
-
-        $count = count($response['data']);
+        $count = count($response['data'] ?? []);
         $bar = $this->output->createProgressBar($count);
         $this->info("Создание {$count} автомобилей");
 

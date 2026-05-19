@@ -55,11 +55,14 @@ class SailFormPage extends FormPage
         $optionsValues = $options->pluck('title', 'id')->toArray();
         $carsPricesMap = [];
 
-        if ($this->resource->getItem()) {
-            $car = $this->resource->getItem()?->car;
-            $carsList[$car?->id] = $car?->getViewName();
+        $carsList = ['' => 'Выберите автомобиль'];
+
+        if ($item = $this->resource->getItem()) {
+            $car = $item->car;
+            if ($car !== null) {
+                $carsList[$car->id] = $car->getViewName();
+            }
         } else {
-            $carsList = [null => 'Выберите автомобиль'];
             foreach ($cars as $car) {
                 $carsList[$car->id] = $car->getViewName();
                 $carsPricesMap[$car->id] = $car->price;

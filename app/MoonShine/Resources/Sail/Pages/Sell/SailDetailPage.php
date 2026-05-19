@@ -32,11 +32,18 @@ class SailDetailPage extends DetailPage
             Text::make('Статус', 'status', function ($item) {
                 return $item->status->formattedValue();
             })
-                ->badge(fn ($value, $field) => match ($field->getData()->status) {
-                    SailStatus::PENDING => 'warning',
-                    SailStatus::COMPLETED => 'success',
-                    SailStatus::CANCELLED => 'error',
-                    default => 'gray',
+                ->badge(function ($value, $field) {
+                    $sail = $field->getData()->getOriginal();
+
+                    if (! $sail instanceof Sail) {
+                        return 'gray';
+                    }
+
+                    return match ($sail->status) {
+                        SailStatus::PENDING => 'warning',
+                        SailStatus::COMPLETED => 'success',
+                        SailStatus::CANCELLED => 'error',
+                    };
                 }),
             Date::make('Дата', 'created_at'),
             Text::make('Автомобиль', 'car', function (Sail $s) {

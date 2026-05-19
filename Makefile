@@ -8,6 +8,10 @@ up:
 down:
 	$(sail) down
 
+restart:
+	$(MAKE) down
+	$(MAKE) up
+
 cache:
 	$(sail) php artisan optimize:clear
 
@@ -18,13 +22,22 @@ docs:
 	$(sail) php artisan l5-swagger:generate
 
 test:
-	$(sail) php artisan test
+	$(sail) php artisan test --parallel
 
 dockblock:
 	$(sail) php artisan ide-helper:models -RW
 
 phpstan:
-	$(sail) vendor/bin/phpstan analyse app
+	$(sail) php vendor/bin/phpstan analyse --memory-limit=512M
+
+pint:
+	$(sail) pint
 
 queue:
 	$(sail) php artisan queue:work
+
+complex:
+	$(MAKE) test
+	$(MAKE) pint
+	$(MAKE) phpstan
+

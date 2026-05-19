@@ -44,7 +44,7 @@ class SailSellResource extends ModelResource
         $sail = $item->getOriginal();
         $service = app(SailService::class);
 
-        $service->updateOrCreate($sail, request()->all());
+        $service->updateOrCreate($sail instanceof Sail ? $sail : null, request()->all());
 
         return $item;
     }
