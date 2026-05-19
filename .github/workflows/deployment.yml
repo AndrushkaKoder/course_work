@@ -76,7 +76,7 @@ jobs:
           git checkout "${DEPLOY_BRANCH}"
           git pull --ff-only origin "${DEPLOY_BRANCH}"
 
-          \$COMPOSE up -d --build
+          \$COMPOSE up -d
 
           \$COMPOSE exec -T app composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
           \$COMPOSE exec -T app php artisan migrate --force
