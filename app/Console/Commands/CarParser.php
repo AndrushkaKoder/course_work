@@ -17,11 +17,11 @@ class CarParser extends Command
 {
     public function handle(): void
     {
-        //        if (Car::count()) {
-        //            $this->error('Список машин уже заполнен');
-        //
-        //            return;
-        //        }
+        if (Car::count()) {
+            $this->error('Список машин уже заполнен');
+
+            return;
+        }
 
         $response = Http::post('https://cars.lego-car.ru/api/v1/filter/', [
             //            'page' => 2,
@@ -33,6 +33,8 @@ class CarParser extends Command
                 1 => 'brand',
             ],
         ])->json();
+
+        dd($response);
 
         $count = count($response['data'] ?? []);
         $bar = $this->output->createProgressBar($count);
