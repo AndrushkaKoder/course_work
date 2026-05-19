@@ -20,13 +20,14 @@ jobs:
       (github.event.workflow_run.conclusion == 'success' &&
        github.event.workflow_run.event == 'push')
     steps:
-      # DEPLOY_SSH_KEY: raw private key (BEGIN/END lines) OR base64 one-liner (recommended).
-      # Base64 avoids broken newlines when the secret is passed between CI steps/containers:
-      #   Linux:  base64 -w0 < private_key
-      #   macOS:  base64 -i private_key | tr -d '\n'
-      - name: Prepare SSH key file
+      # DEPLOY_SSH_KEY on VPS: base64 -w0 < ~/.ssh/github_actions  (one line, no spaces)
+      - name: Deploy to server via SSH
         env:
           SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          DEPLOY_BRANCH: ${{ github.event.workflow_run.head_branch || github.ref_name }}
         run: |
           set -euo pipefail
 
@@ -35,8 +36,7 @@ jobs:
             exit 1
           fi
 
-          deploy_key="$GITHUB_WORKSPACE/.ssh/deploy_key"
-          mkdir -p "$(dirname "$deploy_key")"
+          deploy_key="$RUNNER_TEMP/deploy_key"
 
           if printf '%s' "$SSH_PRIVATE_KEY" | grep -q 'BEGIN.*PRIVATE KEY'; then
             printf '%s\n' "$SSH_PRIVATE_KEY" | sed 's/\r$//' > "$deploy_key"
@@ -50,32 +50,29 @@ jobs:
           chmod 600 "$deploy_key"
 
           if ! ssh-keygen -y -f "$deploy_key" > /dev/null 2>&1; then
-            echo "::error::DEPLOY_SSH_KEY is not a valid SSH private key (wrong file or broken encoding)."
+            echo "::error::DEPLOY_SSH_KEY is not a valid SSH private key."
             exit 1
           fi
 
-          echo "Deploy key fingerprint (must be in server's ~/.ssh/authorized_keys for DEPLOY_USER):"
+          echo "Deploy key fingerprint (check server's authorized_keys):"
           ssh-keygen -lf "$deploy_key"
 
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USER }}
-          key_path: /github/workspace/.ssh/deploy_key
-          script_stop: true
-          script: |
-            set -euo pipefail
-            cd "${{ secrets.DEPLOY_PATH }}"
-            BRANCH="${{ github.event.workflow_run.head_branch || github.ref_name }}"
-            git fetch origin
-            git checkout "$BRANCH"
-            git pull --ff-only origin "$BRANCH"
-            composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
-            php artisan migrate --force
-            php artisan optimize:clear
-            php artisan config:cache
-            php artisan route:cache
-            php artisan view:cache
-            npm ci --ignore-scripts
-            npm run build
+          mkdir -p ~/.ssh
+          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+
+          ssh -i "$deploy_key" -o BatchMode=yes -o StrictHostKeyChecking=yes \
+            "${DEPLOY_USER}@${DEPLOY_HOST}" bash -s <<REMOTE_SCRIPT
+          set -euo pipefail
+          cd "${DEPLOY_PATH}"
+          git fetch origin
+          git checkout "${DEPLOY_BRANCH}"
+          git pull --ff-only origin "${DEPLOY_BRANCH}"
+          composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
+          php artisan migrate --force
+          php artisan optimize:clear
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache
+          npm ci --ignore-scripts
+          npm run build
+          REMOTE_SCRIPT
