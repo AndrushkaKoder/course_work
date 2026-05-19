@@ -34,8 +34,6 @@ class CarParser extends Command
             ],
         ])->json();
 
-        dd($response);
-
         $count = count($response['data'] ?? []);
         $bar = $this->output->createProgressBar($count);
         $this->info("Создание {$count} автомобилей");
