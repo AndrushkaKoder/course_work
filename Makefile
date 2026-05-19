@@ -1,40 +1,41 @@
-sail = ./vendor/bin/sail
+compose = docker compose
 
 up:
-	$(sail) up -d
-	$(sail) php artisan migrate
-	$(sail) php artisan optimize:clear
+	$(compose) up -d --build --remove-orphans
+	$(compose) exec app php artisan migrate --force
+	$(compose) exec app php artisan optimize:clear
+
 
 down:
-	$(sail) down
+	$(compose) down
 
 restart:
 	$(MAKE) down
 	$(MAKE) up
 
 cache:
-	$(sail) php artisan optimize:clear
+	$(compose) exec app php artisan optimize:clear
 
 migrate:
-	$(sail) php artisan migrate
+	$(compose) exec app php artisan migrate
 
 docs:
-	$(sail) php artisan l5-swagger:generate
+	$(compose) exec app php artisan l5-swagger:generate
 
 test:
-	$(sail) php artisan test
+	$(compose) exec app php artisan test
 
 dockblock:
-	$(sail) php artisan ide-helper:models -RW
+	$(compose) exec app php artisan ide-helper:models -RW
 
 phpstan:
-	$(sail) php vendor/bin/phpstan analyse --memory-limit=512M
+	$(compose) exec app php vendor/bin/phpstan analyse --memory-limit=512M
 
 pint:
-	$(sail) pint
+	$(compose) exec app pint
 
 queue:
-	$(sail) php artisan queue:work
+	$(compose)  exec app php artisan queue:work
 
 complex:
 	$(MAKE) test
