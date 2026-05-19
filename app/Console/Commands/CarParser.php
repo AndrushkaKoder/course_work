@@ -1,13 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands;
 
-use App\Enums\Car\CarColor;
 use App\Enums\Car\CarType;
 use App\Models\Car;
+use Exception;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
@@ -15,6 +18,10 @@ use Illuminate\Support\Str;
 #[Description('Command description')]
 class CarParser extends Command
 {
+    /**
+     * @return void
+     * @throws ConnectionException
+     */
     public function handle(): void
     {
         if (Car::count()) {
@@ -23,64 +30,56 @@ class CarParser extends Command
             return;
         }
 
-        $response = Http::post('https://cars.lego-car.ru/api/v1/filter/', [
-            //            'page' => 2,
-            'car_type' => [
-                0 => 'c пробегом',
-            ],
-            'opened' => [
-                0 => 'car_type',
-                1 => 'brand',
-            ],
-        ])->json();
+        $this->parseUsed();
+    }
 
-        $count = count($response['data'] ?? []);
+    /**
+     * @return void
+     * @throws ConnectionException|Exception
+     */
+    private function parseUsed(): void
+    {
+        $response = Http::get(
+            'https://apiweb.rolf.ru/api/v2/vehicles/new/other-listing?type=car&sort=id:asc&city_id=1&count=-12&exclude_vehicle_id%5B0%5D=327344&exclude_vehicle_id%5B1%5D=338040&exclude_vehicle_id%5B2%5D=354764&exclude_vehicle_id%5B3%5D=356331&exclude_vehicle_id%5B4%5D=357147&exclude_vehicle_id%5B5%5D=357188&exclude_vehicle_id%5B6%5D=357541&exclude_vehicle_id%5B7%5D=359054&exclude_vehicle_id%5B8%5D=359129&exclude_vehicle_id%5B9%5D=359249&exclude_vehicle_id%5B10%5D=359423&exclude_vehicle_id%5B11%5D=360464&exclude_vehicle_id%5B12%5D=360510&exclude_vehicle_id%5B13%5D=361275&exclude_vehicle_id%5B14%5D=361599&exclude_vehicle_id%5B15%5D=361600&exclude_vehicle_id%5B16%5D=361601&exclude_vehicle_id%5B17%5D=361606&exclude_vehicle_id%5B18%5D=361659&exclude_vehicle_id%5B19%5D=361663&exclude_vehicle_id%5B20%5D=361666&exclude_vehicle_id%5B21%5D=361679&exclude_vehicle_id%5B22%5D=361798&exclude_vehicle_id%5B23%5D=361800'
+        )->json();
+
+        if (!isset($response['data']['items'])) {
+            throw new Exception('Б/У машины не получены');
+        }
+
+        $items = $response['data']['items'];
+
+        $count = count($items);
         $bar = $this->output->createProgressBar($count);
         $this->info("Создание {$count} автомобилей");
 
-        $cars = $this->getCar($response);
+        foreach ($items as $i => $item) {
+            if ($i >= 400) {
+                return;
+            }
 
-        foreach ($cars as $car) {
-            $stateNumber = $car['type'] === CarType::USED->value ? Str::random(10) : null;
             $newCar = new Car;
-
-            $newCar->mark = $car['mark'];
-            $newCar->model = $car['model'];
-            $newCar->year = $car['year'];
-            $newCar->color = $car['color'];
-            $newCar->type = $car['type'];
-            $newCar->price = $car['price'];
-            $newCar->vin_code = $car['vin_code'];
-            $newCar->state_number = $stateNumber;
-            $newCar->class = $car['class'];
-            $newCar->count = rand(1, 10);
+            $newCar->mark = $item['brand']['name'] ?? 'unknown';
+            $newCar->model = $item['model']['name'] ?? 'unknown';
+            $newCar->year = $item['year'] ?? 2010;
+            $newCar->color = $item['color_name'] ?? '#000';
+            $newCar->type = $i % 2 === 0 ? CarType::USED : CarType::NEW;
+            $newCar->price = $item['price'] ?? 1000000;
+            $newCar->vin_code = $item['vin'][0] ?? Str::uuid()->toString();
+            $newCar->state_number = null;
+            $newCar->class = 'B';
+            $newCar->count = $item['count'] ?? 1;
             $newCar->save();
+
+            if (isset($item['images'])) {
+                $images = array_map(fn(array $item) => $item['url'], $item['images']);
+                $newCar->addMultipleFromUrl($images);
+                $newCar->save();
+            }
 
             $bar->advance();
         }
 
         $bar->finish();
-
-    }
-
-    private function getCar(array $data): \Iterator
-    {
-        $colors = CarColor::getValues();
-        $types = CarType::getValues();
-
-        foreach ($data['data'] ?? [] as $mark) {
-            foreach ($mark['models'] ?? [] as $model) {
-                yield [
-                    'mark' => $mark['name'],
-                    'model' => $model['name'],
-                    'year' => $model['year_from'],
-                    'class' => $model['class'],
-                    'price' => rand(50000, 10000000),
-                    'color' => $colors[rand(0, count($colors) - 1)],
-                    'type' => $types[rand(0, count($types) - 1)],
-                    'vin_code' => Str::uuid()->toString(),
-                ];
-            }
-        }
     }
 }

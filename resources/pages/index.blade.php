@@ -200,6 +200,65 @@
             const initialTab = ['new', 'used'].includes(hashTab) ? hashTab : root.dataset.defaultTab;
             setActive(initialTab);
         })();
+
+        (() => {
+            if (window.__carSlidersInit) return;
+            window.__carSlidersInit = true;
+
+            const showSlide = (slider, index) => {
+                const slides = slider.querySelectorAll('[data-slide]');
+                const dots = slider.querySelectorAll('[data-car-slider-dot]');
+                const total = slides.length;
+
+                if (total === 0) return;
+
+                const next = ((index % total) + total) % total;
+
+                slides.forEach((slide, i) => {
+                    const active = i === next;
+                    slide.classList.toggle('opacity-100', active);
+                    slide.classList.toggle('opacity-0', !active);
+                    slide.classList.toggle('z-[1]', active);
+                    slide.classList.toggle('z-0', !active);
+                    slide.classList.toggle('pointer-events-none', !active);
+                });
+
+                dots.forEach((dot, i) => {
+                    const active = i === next;
+                    dot.classList.toggle('w-4', active);
+                    dot.classList.toggle('bg-amber-400', active);
+                    dot.classList.toggle('w-1.5', !active);
+                    dot.classList.toggle('bg-white/50', !active);
+                });
+
+                slider.dataset.activeSlide = String(next);
+            };
+
+            document.addEventListener('click', (event) => {
+                const target = event.target.closest('[data-car-slider-prev], [data-car-slider-next], [data-car-slider-dot]');
+                if (!target) return;
+
+                const slider = target.closest('[data-car-slider]');
+                if (!slider) return;
+
+                event.preventDefault();
+                event.stopPropagation();
+
+                const current = Number(slider.dataset.activeSlide ?? 0);
+                const slides = slider.querySelectorAll('[data-slide]');
+                const total = slides.length;
+
+                if (total <= 1) return;
+
+                if (target.hasAttribute('data-car-slider-dot')) {
+                    showSlide(slider, Number(target.dataset.carSliderDot));
+                    return;
+                }
+
+                const step = target.hasAttribute('data-car-slider-prev') ? -1 : 1;
+                showSlide(slider, current + step);
+            });
+        })();
     </script>
 </body>
 </html>

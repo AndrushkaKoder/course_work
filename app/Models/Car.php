@@ -55,7 +55,8 @@ use Illuminate\Support\Carbon;
  */
 class Car extends Model
 {
-    use Fileable, HasPreview;
+    use Fileable;
+    use HasPreview;
 
     protected $table = 'cars';
 
@@ -77,7 +78,7 @@ class Car extends Model
 
     protected $casts = [
         'type' => CarType::class,
-        'files' => 'json',
+        'files' => 'array',
     ];
 
     public function getViewName(): string
@@ -87,12 +88,6 @@ class Car extends Model
 
     public function getViewPrice(): string
     {
-        $pr = (string) $this->price;
-
-        $val1 = substr($pr, 0, 3);
-        $val2 = substr($pr, 3, 6);
-        $val3 = substr($pr, 6, 9);
-
-        return "{$val1}-{$val2}-{$val3} P";
+        return "$this->price P";
     }
 }

@@ -35,7 +35,13 @@ class CarIndexPage extends IndexPage
     {
         return [
             ID::make(),
-            Image::make('Превью', 'preview'),
+            Image::make('Превью', 'preview', function (Car $car) {
+                if (!$car->preview) {
+                    return $car->files[0] ?? null;
+                }
+
+                return $car->preview;
+            }),
             Text::make('Модель', 'model'),
             Text::make('Марка', 'mark'),
             Text::make('Цена', 'price', fn (Car $car) => $car->getViewPrice()),
