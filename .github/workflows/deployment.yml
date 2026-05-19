@@ -20,35 +20,49 @@ jobs:
       (github.event.workflow_run.conclusion == 'success' &&
        github.event.workflow_run.event == 'push')
     steps:
-      - name: Configure SSH key
+      # DEPLOY_SSH_KEY: raw private key (BEGIN/END lines) OR base64 one-liner (recommended).
+      # Base64 avoids broken newlines when the secret is passed between CI steps/containers:
+      #   Linux:  base64 -w0 < private_key
+      #   macOS:  base64 -i private_key | tr -d '\n'
+      - name: Prepare SSH key file
         env:
           SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
         run: |
+          set -euo pipefail
+
           if [ -z "$SSH_PRIVATE_KEY" ]; then
             echo "::error::Secret DEPLOY_SSH_KEY is empty."
             exit 1
           fi
 
-          if ! printf '%s' "$SSH_PRIVATE_KEY" | grep -q 'BEGIN.*PRIVATE KEY'; then
-            echo "::error::DEPLOY_SSH_KEY must be the raw private key (with BEGIN/END lines), not base64."
+          deploy_key="$GITHUB_WORKSPACE/.ssh/deploy_key"
+          mkdir -p "$(dirname "$deploy_key")"
+
+          if printf '%s' "$SSH_PRIVATE_KEY" | grep -q 'BEGIN.*PRIVATE KEY'; then
+            printf '%s\n' "$SSH_PRIVATE_KEY" | sed 's/\r$//' > "$deploy_key"
+          else
+            if ! printf '%s' "$SSH_PRIVATE_KEY" | tr -d '\n\r\t ' | openssl base64 -d -A > "$deploy_key" 2>/dev/null; then
+              echo "::error::DEPLOY_SSH_KEY must be a raw private key or valid base64 of that key."
+              exit 1
+            fi
+          fi
+
+          chmod 600 "$deploy_key"
+
+          if ! ssh-keygen -y -f "$deploy_key" > /dev/null 2>&1; then
+            echo "::error::DEPLOY_SSH_KEY is not a valid SSH private key (wrong file or broken encoding)."
             exit 1
           fi
 
-          mkdir -p ~/.ssh
-          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-
-          if ! ssh-keygen -y -f ~/.ssh/deploy_key > /dev/null 2>&1; then
-            echo "::error::DEPLOY_SSH_KEY is not a valid SSH private key."
-            exit 1
-          fi
+          echo "Deploy key fingerprint (must be in server's ~/.ssh/authorized_keys for DEPLOY_USER):"
+          ssh-keygen -lf "$deploy_key"
 
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
-          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          key_path: /github/workspace/.ssh/deploy_key
           script_stop: true
           script: |
             set -euo pipefail
