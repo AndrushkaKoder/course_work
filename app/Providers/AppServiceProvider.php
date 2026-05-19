@@ -22,7 +22,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         if (str_starts_with((string) config('app.url'), 'https://')) {
-            URL::forceScheme('https');
+            if (app()->isProduction()) {
+                URL::forceScheme('https');
+            }
+
         }
 
         View::addNamespace('pages', resource_path('pages'));
