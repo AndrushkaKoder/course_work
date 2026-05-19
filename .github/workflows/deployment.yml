@@ -54,30 +54,41 @@ jobs:
             exit 1
           fi
 
-          echo "Deploy key fingerprint (must match server authorized_keys):"
-          ssh-keygen -lf "$deploy_key"
-          echo ""
-          echo "Public key line (add to ~/.ssh/authorized_keys on VPS for user ${DEPLOY_USER}):"
-          ssh-keygen -y -f "$deploy_key"
-
-          echo ""
           echo "Connecting as ${DEPLOY_USER}@${DEPLOY_HOST} ..."
           mkdir -p ~/.ssh
           ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null
 
           ssh -i "$deploy_key" -o BatchMode=yes -o StrictHostKeyChecking=yes \
-            "${DEPLOY_USER}@${DEPLOY_HOST}" bash -s <<REMOTE_SCRIPT
+            "${DEPLOY_USER}@${DEPLOY_HOST}" bash -l -s <<REMOTE_SCRIPT
           set -euo pipefail
           cd "${DEPLOY_PATH}"
+
+          if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
+            COMPOSE="docker compose"
+          elif command -v docker-compose >/dev/null 2>&1; then
+            COMPOSE="docker-compose"
+          else
+            echo "::error::Docker Compose is required on the server (project runs in containers)."
+            exit 127
+          fi
+
           git fetch origin
           git checkout "${DEPLOY_BRANCH}"
           git pull --ff-only origin "${DEPLOY_BRANCH}"
-          composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
-          php artisan migrate --force
-          php artisan optimize:clear
-          php artisan config:cache
-          php artisan route:cache
-          php artisan view:cache
-          npm ci --ignore-scripts
-          npm run build
+
+          \$COMPOSE up -d --build
+
+          \$COMPOSE exec -T app composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
+          \$COMPOSE exec -T app php artisan migrate --force
+          \$COMPOSE exec -T app php artisan optimize:clear
+          \$COMPOSE exec -T app php artisan config:cache
+          \$COMPOSE exec -T app php artisan route:cache
+          \$COMPOSE exec -T app php artisan view:cache
+
+          docker run --rm \
+            -u 1000:1000 \
+            -v "${DEPLOY_PATH}:/var/www" \
+            -w /var/www \
+            node:22-alpine \
+            sh -c "npm ci --ignore-scripts && npm run build"
           REMOTE_SCRIPT
