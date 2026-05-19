@@ -31,7 +31,7 @@ phpstan:
 	$(compose) exec app php vendor/bin/phpstan analyse --memory-limit=512M
 
 pint:
-	$(compose) exec app pint
+	$(compose) exec app vendor/bin/pint
 
 queue:
 	$(compose)  exec app php artisan queue:work
