@@ -20,12 +20,37 @@ jobs:
       (github.event.workflow_run.conclusion == 'success' &&
        github.event.workflow_run.event == 'push')
     steps:
+      - name: Configure SSH key
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+        run: |
+          if [ -z "$SSH_PRIVATE_KEY" ]; then
+            echo "::error::Secret DEPLOY_SSH_KEY is empty. Add it in Settings → Secrets and variables → Actions."
+            exit 1
+          fi
+
+          mkdir -p ~/.ssh
+
+          # Plain private key (with BEGIN/END lines) or base64-encoded key.
+          if printf '%s' "$SSH_PRIVATE_KEY" | grep -q 'BEGIN.*PRIVATE KEY'; then
+            printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          else
+            printf '%s' "$SSH_PRIVATE_KEY" | tr -d '\n\r ' | base64 -d > ~/.ssh/deploy_key
+          fi
+
+          chmod 600 ~/.ssh/deploy_key
+
+          if ! ssh-keygen -y -f ~/.ssh/deploy_key > /dev/null 2>&1; then
+            echo "::error::DEPLOY_SSH_KEY is invalid. Use the full private key or its base64 (base64 -w0 key on Linux, base64 -i key on macOS)."
+            exit 1
+          fi
+
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
-          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          key_path: ~/.ssh/deploy_key
           script_stop: true
           script: |
             set -euo pipefail
