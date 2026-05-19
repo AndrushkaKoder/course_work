@@ -54,9 +54,14 @@ jobs:
             exit 1
           fi
 
-          echo "Deploy key fingerprint (check server's authorized_keys):"
+          echo "Deploy key fingerprint (must match server authorized_keys):"
           ssh-keygen -lf "$deploy_key"
+          echo ""
+          echo "Public key line (add to ~/.ssh/authorized_keys on VPS for user ${DEPLOY_USER}):"
+          ssh-keygen -y -f "$deploy_key"
 
+          echo ""
+          echo "Connecting as ${DEPLOY_USER}@${DEPLOY_HOST} ..."
           mkdir -p ~/.ssh
           ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null
 
