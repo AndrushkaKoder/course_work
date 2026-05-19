@@ -72,12 +72,19 @@ jobs:
             exit 127
           fi
 
+          git config --global --add safe.directory "${DEPLOY_PATH}"
+
           git fetch origin
           git checkout "${DEPLOY_BRANCH}"
           git pull --ff-only origin "${DEPLOY_BRANCH}"
 
+          # app container runs as UID 1000 (see compose.yml); root-owned files break composer/vendor
+          chown -R 1000:1000 "${DEPLOY_PATH}"
+          chmod -R ug+rwx "${DEPLOY_PATH}/storage" "${DEPLOY_PATH}/bootstrap/cache" 2>/dev/null || true
+
           \$COMPOSE up -d
 
+          \$COMPOSE exec -T -u root app git config --global --add safe.directory /var/www
           \$COMPOSE exec -T app composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
           \$COMPOSE exec -T app php artisan migrate --force
           \$COMPOSE exec -T app php artisan optimize:clear
