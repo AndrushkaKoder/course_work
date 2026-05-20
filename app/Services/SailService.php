@@ -32,12 +32,19 @@ final readonly class SailService
      */
     public function updateOrCreate(?Sail $sail, array $data): Sail
     {
-        return $sail->exists ? $this->update($sail, $data) : $this->create($data);
+        if ($sail !== null && $sail->exists) {
+            return $this->update($sail, $data);
+        }
+
+        return $this->create($data);
     }
 
     private function update(Sail $sail, array $data): Sail
     {
-        $this->writeOffCar($sail, SailStatus::tryFrom((int) $data['status']));
+        $this->writeOffCar(
+            $sail,
+            $this->resolveStatus($data['status'] ?? null),
+        );
         $attributes = array_intersect_key($data, array_flip(self::ATTRIBUTE_KEYS));
 
         if ($attributes !== []) {
@@ -69,9 +76,11 @@ final readonly class SailService
         }
 
         return DB::transaction(function () use ($data) {
-            $this->writeOffCar(null, SailStatus::tryFrom((int) $data['status']));
+            $sail = $this->createSail($data);
 
-            return $this->createSail($data);
+            $this->writeOffCar($sail, $this->resolveStatus($data['status'] ?? null));
+
+            return $sail;
         });
     }
 
@@ -112,24 +121,54 @@ final readonly class SailService
         return $sail;
     }
 
-    private function writeOffCar(?Sail $sail, SailStatus $status): void
+    private function writeOffCar(Sail $sail, ?SailStatus $newStatus): void
     {
-        if ($sail && $sail->status === $status) {
+        if ($newStatus === null || $newStatus === SailStatus::PENDING) {
             return;
         }
 
-        if ($status === SailStatus::PENDING) {
+        $previousStatus = $sail->wasRecentlyCreated
+            ? null
+            : $this->resolveStatus($sail->getOriginal('status') ?? $sail->status);
+
+        if ($previousStatus === $newStatus) {
             return;
         }
 
-        if ($sail->status === SailStatus::COMPLETED && $status === SailStatus::CANCELLED) {
+        if ($previousStatus === SailStatus::COMPLETED && $newStatus === SailStatus::CANCELLED) {
             $this->carService->incrementCar($sail->car_id);
 
             return;
         }
 
-        if ($sail->type === SailType::SELL && $status === SailStatus::COMPLETED) {
+        if ($this->resolveType($sail->type) === SailType::SELL && $newStatus === SailStatus::COMPLETED) {
             $this->carService->decrementCar($sail->car_id);
         }
+    }
+
+    private function resolveStatus(mixed $status): ?SailStatus
+    {
+        if ($status instanceof SailStatus) {
+            return $status;
+        }
+
+        if ($status === null || $status === '') {
+            return null;
+        }
+
+        return SailStatus::tryFrom((int) $status);
+    }
+
+    private function resolveType(mixed $type): ?SailType
+    {
+        if ($type instanceof SailType) {
+            return $type;
+        }
+
+        if ($type === null || $type === '') {
+            return null;
+        }
+
+        return SailType::tryFrom((int) $type);
     }
 }

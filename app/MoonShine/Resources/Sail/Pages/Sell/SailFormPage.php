@@ -9,6 +9,7 @@ use App\Enums\Sail\SailType;
 use App\Models\Car;
 use App\Models\Client;
 use App\Models\Option;
+use App\Models\Sail;
 use App\MoonShine\Resources\Sail\SailBuyResource;
 use Illuminate\Container\EntryNotFoundException;
 use Illuminate\Contracts\Container\CircularDependencyException;
@@ -74,6 +75,9 @@ class SailFormPage extends FormPage
 
                 Hidden::make('type', 'type')
                     ->setValue(SailType::SELL->value)
+                    ->changeFill(static fn (mixed $item): int => $item instanceof Sail
+                        ? SailType::toFormValue($item->type, SailType::SELL)
+                        : SailType::SELL->value)
                     ->required(),
 
                 Select::make('Автомобиль', 'car_id')

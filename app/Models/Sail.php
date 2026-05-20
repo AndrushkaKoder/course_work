@@ -62,6 +62,7 @@ class Sail extends Model
 
     protected $casts = [
         'status' => SailStatus::class,
+        'type' => SailType::class,
         'files' => 'array',
     ];
 

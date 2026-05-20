@@ -16,4 +16,17 @@ enum SailType: int
             self::SELL->value => 'Продажа',
         ];
     }
+
+    public static function toFormValue(mixed $type, self $default): int
+    {
+        if ($type instanceof self) {
+            return $type->value;
+        }
+
+        if ($type === null || $type === '') {
+            return $default->value;
+        }
+
+        return (int) $type;
+    }
 }
