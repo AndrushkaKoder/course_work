@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Http\Controllers\MoonShine\UserPermissionController;
 use App\Models\User;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use MoonShine\Permissions\Http\Controllers\PermissionController as PackagePermissionController;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -18,6 +20,8 @@ class AppServiceProvider extends ServiceProvider
             'moonshine.auth.model' => User::class,
             'auth.providers.moonshine.model' => User::class,
         ]);
+
+        $this->app->bind(PackagePermissionController::class, UserPermissionController::class);
     }
 
     /**

@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace App\MoonShine\Resources\MoonShineUserRole\Pages;
+namespace App\MoonShine\Resources\UserRole\Pages;
 
-use App\MoonShine\Resources\MoonShineUserRole\MoonShineUserRoleResource;
+use App\Models\UserRole;
+use App\MoonShine\Resources\UserRole\UserRoleResource;
 use MoonShine\Contracts\Core\TypeCasts\DataWrapperContract;
 use MoonShine\Contracts\UI\ComponentContract;
 use MoonShine\Contracts\UI\FieldContract;
-use MoonShine\Laravel\Models\MoonshineUserRole;
 use MoonShine\Laravel\Pages\Crud\FormPage;
 use MoonShine\UI\Components\Layout\Box;
 use MoonShine\UI\Fields\ID;
 use MoonShine\UI\Fields\Text;
 
 /**
- * @extends FormPage<MoonShineUserRoleResource, MoonshineUserRole>
+ * @extends FormPage<UserRoleResource, UserRole>
  */
-final class MoonShineUserRoleFormPage extends FormPage
+final class UserRoleFormPage extends FormPage
 {
     /**
      * @return list<ComponentContract|FieldContract>
@@ -36,7 +36,7 @@ final class MoonShineUserRoleFormPage extends FormPage
     protected function rules(DataWrapperContract $item): array
     {
         return [
-            'name' => ['required', 'min:5'],
+            'name' => ['required', 'string', 'min:2', 'max:255'],
         ];
     }
 }

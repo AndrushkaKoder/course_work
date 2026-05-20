@@ -206,7 +206,7 @@ docker compose exec app php artisan app:car-parser
 erDiagram
     cars ||--o{ sails : "участвует в"
     clients ||--o{ sails : "оформляет"
-    moonshine_users ||--o{ sails : "ведёт"
+    users ||--o{ sails : "ведёт"
     sails }o--o{ options : "включает"
 
     cars {

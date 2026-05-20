@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Models\User;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -36,6 +37,10 @@ class HorizonServiceProvider extends HorizonApplicationServiceProvider
         Gate::define('viewHorizon', function (?Authenticatable $user = null): bool {
             if ($user === null || ! isset($user->email)) {
                 return false;
+            }
+
+            if ($user instanceof User && $user->isSuperUser()) {
+                return true;
             }
 
             return in_array((string) $user->email, config('horizon.admins', []), true);

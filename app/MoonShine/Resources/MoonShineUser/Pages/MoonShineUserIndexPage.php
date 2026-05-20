@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\MoonShine\Resources\MoonShineUser\Pages;
 
+use App\Models\UserRole;
 use App\MoonShine\Resources\MoonShineUser\MoonShineUserResource;
 use MoonShine\Contracts\UI\ComponentContract;
 use MoonShine\Contracts\UI\FieldContract;
+use MoonShine\Laravel\Fields\Relationships\BelongsTo;
 use MoonShine\Laravel\Pages\Crud\IndexPage;
 use MoonShine\UI\Components\Table\TableBuilder;
 use MoonShine\UI\Fields\Date;
@@ -27,6 +29,11 @@ final class MoonShineUserIndexPage extends IndexPage
         return [
             ID::make()->sortable(),
             Text::make(__('moonshine::ui.resource.name'), 'name'),
+            BelongsTo::make(
+                __('moonshine::ui.resource.role'),
+                'userRole',
+                formatted: static fn (UserRole $role): string => $role->name,
+            ),
             Email::make(__('moonshine::ui.resource.email'), 'email')->sortable(),
             Date::make(__('moonshine::ui.resource.created_at'), 'created_at')
                 ->format('d.m.Y')

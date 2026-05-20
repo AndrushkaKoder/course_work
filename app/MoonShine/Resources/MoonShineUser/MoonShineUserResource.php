@@ -7,6 +7,7 @@ namespace App\MoonShine\Resources\MoonShineUser;
 use App\Models\User;
 use App\MoonShine\Resources\MoonShineUser\Pages\MoonShineUserFormPage;
 use App\MoonShine\Resources\MoonShineUser\Pages\MoonShineUserIndexPage;
+use App\MoonShine\Traits\WithUserPermissions;
 use MoonShine\Laravel\Resources\ModelResource;
 use MoonShine\MenuManager\Attributes\Group;
 use MoonShine\MenuManager\Attributes\Order;
@@ -22,9 +23,13 @@ use MoonShine\Support\ListOf;
 #[Order(0)]
 class MoonShineUserResource extends ModelResource
 {
+    use WithUserPermissions;
+
     protected string $model = User::class;
 
     protected string $column = 'name';
+
+    protected array $with = ['userRole', 'userPermission'];
 
     protected bool $simplePaginate = true;
 

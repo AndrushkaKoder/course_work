@@ -128,7 +128,7 @@ final readonly class SailService
             return;
         }
 
-        if ($status === SailStatus::COMPLETED) {
+        if ($sail->type === SailType::SELL && $status === SailStatus::COMPLETED) {
             $this->carService->decrementCar($sail->car_id);
         }
     }

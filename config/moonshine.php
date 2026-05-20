@@ -35,7 +35,7 @@ return [
         'safari-pinned-tab' => '/vendor/moonshine/safari-pinned-tab.svg',
     ],
 
-    // false — не поднимать moonshine_users / moonshine_user_roles (админы в users)
+    // false — не поднимать moonshine_users (админы в App\Models\User, роли в user_roles)
     'use_migrations' => false,
     'use_notifications' => true,
     'use_database_notifications' => true,

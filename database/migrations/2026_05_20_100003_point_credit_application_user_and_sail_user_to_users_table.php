@@ -64,7 +64,7 @@ return new class extends Migration
             Schema::table('credit_applications', function (Blueprint $table) {
                 $table->foreign('manager_id')
                     ->references('id')
-                    ->on('moonshine_users')
+                    ->on('users')
                     ->nullOnDelete();
             });
         }
@@ -77,7 +77,7 @@ return new class extends Migration
             Schema::table('sails', function (Blueprint $table) {
                 $table->foreign('user_id')
                     ->references('id')
-                    ->on('moonshine_users')
+                    ->on('users')
                     ->nullOnDelete();
             });
         }
