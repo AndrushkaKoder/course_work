@@ -13,8 +13,12 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property string $name
  * @property string $phone
+ * @property string|null $passport_series
+ * @property string|null $passport_number
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property-read Collection<int, CreditApplication> $creditApplications
+ * @property-read int|null $credit_applications_count
  * @property-read Collection<int, Sail> $sails
  * @property-read int|null $sails_count
  *
@@ -36,7 +40,14 @@ class Client extends Model
     protected $fillable = [
         'name',
         'phone',
+        'passport_series',
+        'passport_number',
     ];
+
+    public function creditApplications(): HasMany
+    {
+        return $this->hasMany(CreditApplication::class, 'client_id');
+    }
 
     public function sails(): HasMany
     {

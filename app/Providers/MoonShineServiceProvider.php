@@ -7,8 +7,8 @@ namespace App\Providers;
 use App\MoonShine\Resources\Car\CarNewResource;
 use App\MoonShine\Resources\Car\CarUsedResource;
 use App\MoonShine\Resources\Client\ClientResource;
+use App\MoonShine\Resources\CreditApplication\CreditApplicationResource;
 use App\MoonShine\Resources\MoonShineUser\MoonShineUserResource;
-use App\MoonShine\Resources\MoonShineUserRole\MoonShineUserRoleResource;
 use App\MoonShine\Resources\Option\OptionResource;
 use App\MoonShine\Resources\Sail\SailBuyResource;
 use App\MoonShine\Resources\Sail\SailSellResource;
@@ -26,12 +26,12 @@ class MoonShineServiceProvider extends ServiceProvider
         $core
             ->resources([
                 MoonShineUserResource::class,
-                MoonShineUserRoleResource::class,
                 CarNewResource::class,
                 CarUsedResource::class,
                 SailBuyResource::class,
                 SailSellResource::class,
                 ClientResource::class,
+                CreditApplicationResource::class,
                 OptionResource::class,
             ])
             ->pages([

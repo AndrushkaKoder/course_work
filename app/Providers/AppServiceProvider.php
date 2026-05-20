@@ -1,19 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Providers;
 
+use App\Models\User;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
-        //
+        // После moonshine:install --force publish не должен оставлять MoonshineUser в рантайме
+        config([
+            'moonshine.auth.model' => User::class,
+            'auth.providers.moonshine.model' => User::class,
+        ]);
     }
 
     /**

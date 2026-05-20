@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Models\User;
 use App\MoonShine\Layouts\MoonShineLayout;
 use App\MoonShine\Pages\Dashboard;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -18,7 +19,6 @@ use MoonShine\Crud\Forms\LoginForm;
 use MoonShine\Laravel\Exceptions\MoonShineNotFoundException;
 use MoonShine\Laravel\Http\Middleware\Authenticate;
 use MoonShine\Laravel\Http\Middleware\ChangeLocale;
-use MoonShine\Laravel\Models\MoonshineUser;
 use MoonShine\Laravel\Pages\ErrorPage;
 use MoonShine\Laravel\Pages\LoginPage;
 use MoonShine\Laravel\Pages\ProfilePage;
@@ -35,24 +35,21 @@ return [
         'safari-pinned-tab' => '/vendor/moonshine/safari-pinned-tab.svg',
     ],
 
-    // Default flags
-    'use_migrations' => true,
+    // false — не поднимать moonshine_users / moonshine_user_roles (админы в users)
+    'use_migrations' => false,
     'use_notifications' => true,
     'use_database_notifications' => true,
     'use_routes' => true,
     'use_profile' => true,
 
-    // Routing
     'domain' => env('MOONSHINE_DOMAIN'),
     'prefix' => env('MOONSHINE_ROUTE_PREFIX', 'admin'),
     'page_prefix' => env('MOONSHINE_PAGE_PREFIX', 'page'),
     'resource_prefix' => env('MOONSHINE_RESOURCE_PREFIX', 'resource'),
     'home_route' => 'moonshine.index',
 
-    // Error handling
     'not_found_exception' => MoonShineNotFoundException::class,
 
-    // Middleware
     'middleware' => [
         ConvertEmptyStringsToNull::class,
         EncryptCookies::class,
@@ -65,31 +62,26 @@ return [
         ChangeLocale::class,
     ],
 
-    // Storage
     'disk' => 'public',
     'disk_options' => [],
     'cache' => 'file',
 
-    // Authentication and profile
     'auth' => [
         'enabled' => true,
         'guard' => 'moonshine',
-        'model' => MoonshineUser::class,
+        'model' => User::class,
         'middleware' => [
             Authenticate::class,
         ],
         'pipelines' => [],
     ],
 
-    // Authentication and profile
     'user_fields' => [
         'username' => 'email',
         'password' => 'password',
         'name' => 'name',
-        'avatar' => 'avatar',
     ],
 
-    // Layout, palette, pages, forms
     'layout' => MoonShineLayout::class,
     'palette' => PurplePalette::class,
 
@@ -105,7 +97,6 @@ return [
         'error' => ErrorPage::class,
     ],
 
-    // Localizations
     'locale' => 'en',
     'locale_key' => ChangeLocale::KEY,
     'locales' => [

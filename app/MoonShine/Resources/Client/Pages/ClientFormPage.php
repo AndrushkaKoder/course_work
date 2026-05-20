@@ -30,6 +30,8 @@ class ClientFormPage extends FormPage
             Box::make([
                 Text::make('Имя', 'name'),
                 Text::make('Телефон', 'phone')->mask('+7 (999) 999-99-99'),
+                Text::make('Серия паспорта', 'passport_series')->nullable(),
+                Text::make('Номер паспорта', 'passport_number')->nullable(),
             ]),
         ];
     }

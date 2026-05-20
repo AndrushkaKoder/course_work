@@ -36,7 +36,7 @@ class CarIndexPage extends IndexPage
         return [
             ID::make(),
             Image::make('Превью', 'preview', function (Car $car) {
-                if (!$car->preview) {
+                if (! $car->preview) {
                     return $car->files[0] ?? null;
                 }
 

@@ -31,6 +31,8 @@ class ClientIndexPage extends IndexPage
         return [
             Text::make('Имя', 'name'),
             Text::make('Телефон', 'phone'),
+            Text::make('Серия паспорта', 'passport_series'),
+            Text::make('Номер паспорта', 'passport_number'),
         ];
     }
 

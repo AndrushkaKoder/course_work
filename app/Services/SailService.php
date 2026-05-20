@@ -10,8 +10,8 @@ use App\Enums\Sail\SailType;
 use App\Models\Car;
 use App\Models\Sail;
 use Exception;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use MoonShine\Laravel\MoonShineAuth;
 use Throwable;
 
 final readonly class SailService
@@ -95,7 +95,7 @@ final readonly class SailService
         $sail->status = $data['status'];
         $sail->car_id = $data['car_id'] ?? $car->id;
         $sail->client_id = $data['client_id'];
-        $sail->user_id = Auth::id();
+        $sail->user_id = MoonShineAuth::getGuard()->id();
         $sail->type = $data['type'];
         $sail->price = $data['price'];
 

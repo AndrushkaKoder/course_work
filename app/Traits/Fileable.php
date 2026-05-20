@@ -11,7 +11,7 @@ use Throwable;
 trait Fileable
 {
     /**
-     * @param array<mixed> $files
+     * @param  array<mixed>  $files
      */
     public function addMultiple(array $files): void
     {

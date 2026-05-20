@@ -61,4 +61,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Sail::class, 'user_id');
     }
+
+    public function creditApplications(): HasMany
+    {
+        return $this->hasMany(CreditApplication::class, 'user_id');
+    }
 }

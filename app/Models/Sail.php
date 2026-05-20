@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Carbon;
-use MoonShine\Laravel\Models\MoonshineUser;
 
 /**
  * @property int $id
@@ -68,7 +67,7 @@ class Sail extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(MoonshineUser::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function car(): BelongsTo

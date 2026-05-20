@@ -7,6 +7,7 @@ namespace App\MoonShine\Layouts;
 use App\MoonShine\Resources\Car\CarNewResource;
 use App\MoonShine\Resources\Car\CarUsedResource;
 use App\MoonShine\Resources\Client\ClientResource;
+use App\MoonShine\Resources\CreditApplication\CreditApplicationResource;
 use App\MoonShine\Resources\Option\OptionResource;
 use App\MoonShine\Resources\Sail\SailBuyResource;
 use App\MoonShine\Resources\Sail\SailSellResource;
@@ -36,6 +37,7 @@ final class MoonShineLayout extends AppLayout
     {
         return [
             ...parent::menu(),
+            MenuItem::make(CreditApplicationResource::class, 'Кредитные заявки'),
             MenuItem::make(ClientResource::class, 'Клиенты'),
             MenuItem::make(OptionResource::class, 'Доп.опции'),
             MenuGroup::make('Автомобили', [
