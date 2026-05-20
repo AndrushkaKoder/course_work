@@ -27,7 +27,7 @@ class CreditApplicationResource extends ModelResource
 
     protected function modifyQueryBuilder(Builder $builder): Builder
     {
-        return $builder->with(['client', 'user']);
+        return $builder->where('user_id', Auth::id())->with(['client', 'user']);
     }
 
     protected function modifyItemQueryBuilder(Builder $builder): Builder

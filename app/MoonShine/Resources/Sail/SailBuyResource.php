@@ -11,6 +11,7 @@ use App\MoonShine\Resources\Sail\Pages\Buy\SailFormPage;
 use App\MoonShine\Resources\Sail\Pages\Buy\SailIndexPage;
 use App\Services\SailService;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use MoonShine\Contracts\Core\DependencyInjection\FieldsContract;
 use MoonShine\Contracts\Core\PageContract;
 use MoonShine\Contracts\Core\TypeCasts\DataWrapperContract;
@@ -27,7 +28,9 @@ class SailBuyResource extends ModelResource
 
     protected function modifyQueryBuilder(Builder $builder): Builder
     {
-        return $builder->where('type', SailType::BUY);
+        return $builder
+            ->where('user_id', Auth::id())
+            ->where('type', SailType::BUY);
     }
 
     /**

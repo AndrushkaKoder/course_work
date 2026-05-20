@@ -86,6 +86,13 @@ class Car extends Model
         return "{$this->mark} {$this->model} {$this->year}";
     }
 
+    public function getCarSailInfo(): string
+    {
+        $type = $this->type == CarType::USED ? 'Б/У' : 'Новый';
+
+        return "{$this->id} | {$this->mark} {$this->model} | {$this->year} | {$type}";
+    }
+
     public function getViewPrice(): string
     {
         return "$this->price P";

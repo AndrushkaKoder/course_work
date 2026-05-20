@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\MoonShine\Resources\Sail\Pages\Sell;
 
-use App\Enums\Car\CarType;
 use App\Enums\Sail\SailStatus;
 use App\Enums\Sail\SailType;
 use App\Models\Car;
@@ -46,7 +45,6 @@ class SailFormPage extends FormPage
             ->get();
 
         $cars = Car::query()
-            ->where('type', CarType::NEW)
             ->where('count', '>', 0)
             ->orderByDesc('id')
             ->get();
@@ -60,11 +58,11 @@ class SailFormPage extends FormPage
         if ($item = $this->resource->getItem()) {
             $car = $item->car;
             if ($car !== null) {
-                $carsList[$car->id] = $car->getViewName();
+                $carsList[$car->id] = $car->getCarSailInfo();
             }
         } else {
             foreach ($cars as $car) {
-                $carsList[$car->id] = $car->getViewName();
+                $carsList[$car->id] = $car->getCarSailInfo();
                 $carsPricesMap[$car->id] = $car->price;
             }
         }
