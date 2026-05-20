@@ -38,7 +38,6 @@ class CreditApplication extends Model
         'client_id',
         'user_id',
         'sum',
-        'percent',
         'files',
         'status',
         'cancel_reason',
@@ -47,7 +46,6 @@ class CreditApplication extends Model
     protected $casts = [
         'status' => CreditApplicationStatus::class,
         'files' => 'array',
-        'percent' => 'decimal:2',
     ];
 
     public function client(): BelongsTo
@@ -63,14 +61,5 @@ class CreditApplication extends Model
     public function formattedSum(): string
     {
         return number_format($this->sum, 0, ',', ' ').' ₽';
-    }
-
-    public function formattedPercent(): string
-    {
-        if ($this->percent === null) {
-            return '—';
-        }
-
-        return number_format((float) $this->percent, 2, ',', ' ').' %';
     }
 }

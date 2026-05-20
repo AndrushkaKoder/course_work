@@ -35,7 +35,7 @@ class CreditApplicationFormPage extends FormPage
          */
         $item = $this->getItem();
 
-        $client = $item->client;
+        $client = $item?->client;
 
         return [
             Box::make([
@@ -46,12 +46,6 @@ class CreditApplicationFormPage extends FormPage
 
                 Number::make('Сумма кредита', 'sum')
                     ->min(1)
-                    ->required(),
-
-                Number::make('Процентная ставка', 'percent')
-                    ->min(0)
-                    ->max(100)
-                    ->step(0.01)
                     ->required(),
 
                 Text::make('Серия паспорта', 'passport_series')
@@ -86,9 +80,8 @@ class CreditApplicationFormPage extends FormPage
         return [
             'client_id' => ['required', 'exists:clients,id'],
             'sum' => ['required', 'integer', 'min:1'],
-            'percent' => ['required', 'numeric', 'min:0', 'max:100'],
-            'passport_series' => ['required', 'numeric', 'min:4', 'max:4'],
-            'passport_number' => ['required', 'numeric', 'min:6', 'max:6'],
+            'passport_series' => ['required', 'numeric'],
+            'passport_number' => ['required', 'numeric'],
         ];
     }
 

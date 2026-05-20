@@ -29,7 +29,7 @@ class CreditApplicationDetailPage extends DetailPage
     protected function fields(): iterable
     {
         return [
-            ID::make('ID', 'id'),
+            ID::make(),
             Text::make('Статус', 'status', function (CreditApplication $item) {
                 return $item->status?->formattedValue() ?? 'В обработке';
             })
@@ -47,7 +47,6 @@ class CreditApplicationDetailPage extends DetailPage
                     };
                 }),
             Text::make('Сумма', 'sum', fn (CreditApplication $item) => $item->formattedSum()),
-            Text::make('Процентная ставка', 'percent', fn (CreditApplication $item) => $item->formattedPercent()),
             Text::make('Менеджер', 'user.name', fn (CreditApplication $item) => $item->user?->name ?? '—'),
             Text::make('Клиент', 'client.name', fn (CreditApplication $item) => $item->client->name),
             Text::make('Телефон', 'client.phone', fn (CreditApplication $item) => $item->client->phone),

@@ -57,7 +57,6 @@ class CreditApplicationIndexPage extends IndexPage
             ID::make(),
             Text::make('Клиент', 'client.name'),
             Text::make('Сумма', 'sum', fn (CreditApplication $item) => $item->formattedSum()),
-            Text::make('Ставка', 'percent', fn (CreditApplication $item) => $item->formattedPercent()),
             Text::make('Менеджер', 'user.name', fn (CreditApplication $item) => $item->user?->name ?? '—'),
             Text::make('Статус', 'status', function (CreditApplication $item) {
                 return $item->status?->formattedValue() ?? 'В обработке';

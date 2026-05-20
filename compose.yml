@@ -9,8 +9,14 @@ services:
         container_name: app
         volumes:
             - .:/var/www
+            - ./_docker/php/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini:ro
+            - ./_docker/supervisor/supervisord.conf:/etc/supervisor/supervisord.conf:ro
+            - ./_docker/supervisor/queue.conf:/etc/supervisor/conf.d/queue.conf:ro
         depends_on:
             - database
+            - redis
+        environment:
+            REDIS_HOST: redis
         networks:
             - laravel-network
         restart: unless-stopped
@@ -28,6 +34,19 @@ services:
             - app
         networks:
             - laravel-network
+
+    redis:
+        image: redis:7-alpine
+        container_name: redis
+        restart: unless-stopped
+        networks:
+            - laravel-network
+        deploy:
+            resources:
+                limits:
+                    memory: 256M
+                reservations:
+                    memory: 256M
 
     database:
         image: postgres:15-alpine

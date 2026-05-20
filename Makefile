@@ -28,7 +28,7 @@ dockblock:
 	$(compose) exec app php artisan ide-helper:models -RW
 
 phpstan:
-	$(compose) exec app php vendor/bin/phpstan analyse --memory-limit=512M
+	$(compose) exec app php vendor/bin/phpstan analyse --memory-limit=-1
 
 pint:
 	$(compose) exec app vendor/bin/pint
