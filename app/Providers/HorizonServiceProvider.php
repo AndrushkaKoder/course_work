@@ -1,36 +1,44 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Providers;
 
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Horizon\Horizon;
 use Laravel\Horizon\HorizonApplicationServiceProvider;
 
 class HorizonServiceProvider extends HorizonApplicationServiceProvider
 {
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
         parent::boot();
 
-        // Horizon::routeSmsNotificationsTo('15556667777');
-        // Horizon::routeMailNotificationsTo('example@example.com');
-        // Horizon::routeSlackNotificationsTo('slack-webhook-url', '#channel');
+        Horizon::auth(function (Request $request): bool {
+            $user = $request->user('moonshine')
+                ?? Auth::guard('moonshine')->user()
+                ?? $request->user('web')
+                ?? $request->user();
+
+            if ($user === null) {
+                return false;
+            }
+
+            return Gate::forUser($user)->allows('viewHorizon');
+        });
     }
 
-    /**
-     * Register the Horizon gate.
-     *
-     * This gate determines who can access Horizon in non-local environments.
-     */
     protected function gate(): void
     {
-        Gate::define('viewHorizon', function ($user = null) {
-            return in_array(optional($user)->email, [
-                'admin1@admin.com',
-            ]);
+        Gate::define('viewHorizon', function (?Authenticatable $user = null): bool {
+            if ($user === null || ! isset($user->email)) {
+                return false;
+            }
+
+            return in_array((string) $user->email, config('horizon.admins', []), true);
         });
     }
 }

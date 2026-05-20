@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Str;
+use MoonShine\Laravel\Http\Middleware\Authenticate;
 
 return [
 
@@ -17,7 +18,25 @@ return [
         Str::slug(env('APP_NAME', 'laravel'), '_').'_horizon:'
     ),
 
-    'middleware' => ['web'],
+    'middleware' => [
+        'web',
+        Authenticate::class,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Allowed Administrators
+    |--------------------------------------------------------------------------
+    |
+    | Emails of users who can access the Horizon dashboard (all environments).
+    | Comma-separated list in HORIZON_ADMINS.
+    |
+    */
+
+    'admins' => array_values(array_filter(array_map(
+        trim(...),
+        explode(',', (string) env('HORIZON_ADMINS', 'admin@admin.com')),
+    ))),
 
     'waits' => [
         'redis:default' => 60,
