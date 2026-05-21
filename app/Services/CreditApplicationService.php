@@ -16,7 +16,6 @@ final readonly class CreditApplicationService
     private const array ATTRIBUTE_KEYS = [
         'client_id',
         'sum',
-        'percent',
     ];
 
     /**

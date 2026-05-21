@@ -34,7 +34,7 @@ class OptionFormPage extends FormPage
                 ID::make(),
                 Text::make('Название', 'title')->required(),
                 Number::make('Цена', 'price')->required(),
-                Image::make('Фото', 'preview')->required(),
+                Image::make('Фото', 'preview')->required()->removable(),
             ]),
         ];
     }

@@ -1,7 +1,11 @@
 @php
-    use Illuminate\Support\Facades\Storage;
+    use App\Models\Car;use Illuminate\Support\Facades\Storage;
 
-    $rawFiles = $car->files ?? [];
+    /**
+    * @var Car $car
+     */
+
+    $rawFiles = $car->getFiles() ?? [];
     if (is_string($rawFiles)) {
         $rawFiles = json_decode($rawFiles, true) ?? [];
     }
@@ -50,7 +54,7 @@
                 aria-label="Предыдущее фото"
             >
                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"/>
                 </svg>
             </button>
             <button
@@ -60,11 +64,12 @@
                 aria-label="Следующее фото"
             >
                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
                 </svg>
             </button>
 
-            <div class="absolute bottom-2 left-1/2 z-20 flex -translate-x-1/2 gap-1.5 rounded-full border border-white/10 bg-slate-950/60 px-2 py-1 backdrop-blur">
+            <div
+                class="absolute bottom-2 left-1/2 z-20 flex -translate-x-1/2 gap-1.5 rounded-full border border-white/10 bg-slate-950/60 px-2 py-1 backdrop-blur">
                 @foreach ($slides as $index => $url)
                     <button
                         type="button"
@@ -77,10 +82,11 @@
         @endif
     </div>
 @else
-    <div class="flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-slate-800 to-slate-900 text-slate-500">
+    <div
+        class="flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-slate-800 to-slate-900 text-slate-500">
         <svg class="h-12 w-12 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0 0 22.5 18.75V5.25A2.25 2.25 0 0 0 20.25 3H3.75A2.25 2.25 0 0 0 1.5 5.25v13.5A2.25 2.25 0 0 0 3.75 21Z" />
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M2.25 15.75l5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0 0 22.5 18.75V5.25A2.25 2.25 0 0 0 20.25 3H3.75A2.25 2.25 0 0 0 1.5 5.25v13.5A2.25 2.25 0 0 0 3.75 21Z"/>
         </svg>
-        <span class="text-xs">Фото скоро</span>
     </div>
 @endif

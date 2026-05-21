@@ -8,6 +8,7 @@ use App\Enums\Sail\SailStatus;
 use App\Enums\Sail\SailType;
 use App\Traits\Fileable;
 use Eloquent;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -26,6 +27,8 @@ use Illuminate\Support\Carbon;
  * @property array<array-key, mixed>|null $files
  * @property-read Car|null $car
  * @property-read Client|null $client
+ * @property-read Collection<int, Option> $options
+ * @property-read int|null $options_count
  * @property-read User|null $user
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Sail newModelQuery()

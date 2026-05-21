@@ -52,7 +52,7 @@ class SailIndexPage extends IndexPage
                 }),
             Date::make('Дата', 'created_at'),
             Text::make('Автомобиль', 'car', function (Sail $s) {
-                return $s->car->getViewName();
+                return $s->car?->getViewName() ?? 'Удален из базы';
             }),
             Text::make('Сумма', 'price', fn (Sail $s) => $s->formattedPrice()),
             Text::make('Клиент', 'client.name', fn (Sail $s) => "{$s->client->name} ({$s->client_id})"),

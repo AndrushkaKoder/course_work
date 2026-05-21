@@ -38,9 +38,5 @@
                 В наличии: {{ $car->count }}
             </li>
         </ul>
-
-        <p class="mt-auto border-t border-white/5 pt-4 font-mono text-[10px] uppercase tracking-wider text-slate-500">
-            VIN {{ $car->vin_code }}
-        </p>
     </div>
 </article>

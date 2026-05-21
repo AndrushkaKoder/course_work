@@ -13,10 +13,10 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property string $name
  * @property string $phone
- * @property string|null $passport_series
- * @property string|null $passport_number
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property string|null $passport_series
+ * @property string|null $passport_number
  * @property-read Collection<int, CreditApplication> $creditApplications
  * @property-read int|null $credit_applications_count
  * @property-read Collection<int, Sail> $sails
@@ -28,6 +28,8 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Client wherePassportNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Client wherePassportSeries($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Client wherePhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereUpdatedAt($value)
  *

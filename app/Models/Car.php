@@ -8,6 +8,7 @@ use App\Enums\Car\CarType;
 use App\Traits\Fileable;
 use App\Traits\HasPreview;
 use Eloquent;
+use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
@@ -24,7 +25,7 @@ use Illuminate\Support\Carbon;
  * @property int $count
  * @property string|null $state_number
  * @property string|null $preview
- * @property string|null $images
+ * @property array<array-key, mixed>|null $files
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property string|null $deleted_at
@@ -38,8 +39,8 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Car whereCount($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Car whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Car whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Car whereFiles($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Car whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Car whereImages($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Car whereMark($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Car whereMileage($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Car whereModel($value)
@@ -78,7 +79,7 @@ class Car extends Model
 
     protected $casts = [
         'type' => CarType::class,
-        'files' => 'array',
+        'files' => AsArrayObject::class,
     ];
 
     public function getViewName(): string
@@ -96,5 +97,10 @@ class Car extends Model
     public function getViewPrice(): string
     {
         return "$this->price P";
+    }
+
+    public function getFiles(): array
+    {
+        return $this->files?->toArray() ?? []; // @phpstan-ignore-line
     }
 }

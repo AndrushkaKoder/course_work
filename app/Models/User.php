@@ -24,15 +24,18 @@ use Illuminate\Support\Carbon;
  * @property string $email
  * @property Carbon|null $email_verified_at
  * @property string $password
- * @property int|null $user_role_id
  * @property string|null $remember_token
- * @property-read UserRole|null $userRole
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property int|null $user_role_id
+ * @property-read Collection<int, CreditApplication> $creditApplications
+ * @property-read int|null $credit_applications_count
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read Collection<int, Sail> $sails
  * @property-read int|null $sails_count
+ * @property-read UserPermission|null $userPermission
+ * @property-read UserRole|null $userRole
  *
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newModelQuery()
@@ -46,6 +49,7 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRememberToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUserRoleId($value)
  *
  * @mixin \Eloquent
  */

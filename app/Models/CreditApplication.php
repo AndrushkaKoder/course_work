@@ -15,9 +15,8 @@ use Illuminate\Support\Carbon;
  * @property int $client_id
  * @property int|null $user_id
  * @property int $sum
- * @property string|null $percent
- * @property array<array-key, mixed>|null $files
  * @property CreditApplicationStatus|null $status
+ * @property array<array-key, mixed>|null $files
  * @property string|null $cancel_reason
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -27,6 +26,15 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditApplication newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditApplication newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditApplication query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditApplication whereCancelReason($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditApplication whereClientId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditApplication whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditApplication whereFiles($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditApplication whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditApplication whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditApplication whereSum($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditApplication whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditApplication whereUserId($value)
  *
  * @mixin \Eloquent
  */
