@@ -32,6 +32,8 @@ final readonly class SailService
      */
     public function updateOrCreate(?Sail $sail, array $data): Sail
     {
+        $this->carService->forgetCarsCache();
+
         if ($sail !== null && $sail->exists) {
             return $this->update($sail, $data);
         }
