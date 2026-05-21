@@ -32,7 +32,7 @@ trait Fileable
             }
         }
 
-        $this->files = $paths;
+        $this->files = json_encode($paths, JSON_UNESCAPED_UNICODE, JSON_UNESCAPED_SLASHES);
     }
 
     /**

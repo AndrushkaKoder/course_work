@@ -8,7 +8,6 @@ use App\Enums\Car\CarType;
 use App\Traits\Fileable;
 use App\Traits\HasPreview;
 use Eloquent;
-use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
@@ -79,7 +78,6 @@ class Car extends Model
 
     protected $casts = [
         'type' => CarType::class,
-        'files' => AsArrayObject::class,
     ];
 
     public function getViewName(): string
@@ -101,6 +99,16 @@ class Car extends Model
 
     public function getFiles(): array
     {
-        return $this->files?->toArray() ?? []; // @phpstan-ignore-line
+        $files = $this->files;
+
+        if (! $files) {
+            return [];
+        }
+
+        if (is_string($files)) {
+            return json_decode($files, true);
+        }
+
+        return $this->files;
     }
 }

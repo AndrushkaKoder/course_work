@@ -138,13 +138,13 @@ final readonly class SailService
         }
 
         if ($previousStatus === SailStatus::COMPLETED && $newStatus === SailStatus::CANCELLED) {
-            $this->carService->incrementCar($sail->car_id);
+            $this->carService->incrementCar((int) $sail->car_id);
 
             return;
         }
 
         if ($this->resolveType($sail->type) === SailType::SELL && $newStatus === SailStatus::COMPLETED) {
-            $this->carService->decrementCar($sail->car_id);
+            $this->carService->decrementCar((int) $sail->car_id);
         }
     }
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\MoonShine\Resources\Car\Pages;
 
 use App\Enums\Car\CarType;
+use App\Models\Car;
 use App\MoonShine\Resources\Car\CarUsedResource;
 use MoonShine\Contracts\Core\TypeCasts\DataWrapperContract;
 use MoonShine\Contracts\UI\ComponentContract;
@@ -33,14 +34,16 @@ class CarFormPage extends FormPage
         return [
             Box::make([
                 Select::make('Тип', 'type')->options(CarType::getLabels()),
-                Text::make('Марка', 'mark'),
-                Text::make('Модель', 'model'),
-                Number::make('Год', 'year'),
-                Number::make('Цена', 'price'),
-                Text::make('VIN', 'vin_code'),
-                Text::make('Цвет', 'color'),
-                Image::make('Превью', 'preview'),
-                Image::make('Изображения', 'files')->multiple(),
+                Text::make('Марка', 'mark')->required(),
+                Text::make('Модель', 'model')->required(),
+                Number::make('Год', 'year')->required(),
+                Number::make('Цена', 'price')->required(),
+                Text::make('VIN', 'vin_code')->required(),
+                Text::make('Цвет', 'color')->required(),
+                Image::make('Превью', 'preview')->required(),
+                Image::make('Изображения', 'files', function (?Car $car) {
+                    return $car?->getFiles() ?? [];
+                })->required()->multiple(),
             ]),
         ];
     }
