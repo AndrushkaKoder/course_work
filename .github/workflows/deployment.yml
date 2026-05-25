@@ -94,6 +94,7 @@ jobs:
           \$COMPOSE exec -T app php artisan config:cache
           \$COMPOSE exec -T app php artisan route:cache
           \$COMPOSE exec -T app php artisan view:cache
+          \$COMPOSE exec -T app php artisan horizon:terminate
 
           docker run --rm \
             -u 1000:1000 \
