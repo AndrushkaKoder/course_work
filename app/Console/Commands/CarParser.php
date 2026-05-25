@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Enums\Car\CarStatus;
 use App\Enums\Car\CarType;
 use App\Models\Car;
 use Exception;
@@ -66,7 +67,7 @@ class CarParser extends Command
             $newCar->vin_code = $item['vin'][0] ?? Str::uuid()->toString();
             $newCar->state_number = null;
             $newCar->class = 'B';
-            $newCar->count = $item['count'] ?? 1;
+            $newCar->status = CarStatus::IN_STOCK;
             $newCar->save();
 
             if (isset($item['images'])) {

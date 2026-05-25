@@ -11,6 +11,7 @@ use App\MoonShine\Resources\Client\ClientResource;
 use App\MoonShine\Resources\CreditApplication\CreditApplicationResource;
 use App\MoonShine\Resources\MoonShineUser\MoonShineUserResource;
 use App\MoonShine\Resources\Option\OptionResource;
+use App\MoonShine\Resources\Report\ReportResource;
 use App\MoonShine\Resources\Sail\SailBuyResource;
 use App\MoonShine\Resources\Sail\SailSellResource;
 use App\MoonShine\Resources\UserRole\UserRoleResource;
@@ -40,7 +41,11 @@ class MoonShineServiceProvider extends ServiceProvider
                     return false;
                 }
 
-                if (in_array($resource::class, [MoonShineUserResource::class, UserRoleResource::class], true)) {
+                if (in_array($resource::class, [
+                    MoonShineUserResource::class,
+                    UserRoleResource::class,
+                    ReportResource::class,
+                ], true)) {
                     return $user->isSuperUser();
                 }
 
@@ -71,6 +76,7 @@ class MoonShineServiceProvider extends ServiceProvider
                 ClientResource::class,
                 CreditApplicationResource::class,
                 OptionResource::class,
+                ReportResource::class,
             ])
             ->pages([
                 ...$core->getConfig()->getPages(),

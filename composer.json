@@ -13,12 +13,14 @@
         "laravel/tinker": "^3.0",
         "moonshine/moonshine": "^4.11",
         "moonshine/permissions": "^3.0",
+        "openspout/openspout": "^5.7",
         "predis/predis": "^3.0"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.7",
         "fakerphp/faker": "^1.23",
         "larastan/larastan": "^3.9",
+        "laravel-lang/moonshine": "^1.9",
         "laravel/pail": "^1.2.5",
         "laravel/pint": "^1.27",
         "laravel/sail": "^1.57",

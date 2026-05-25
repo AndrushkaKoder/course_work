@@ -11,6 +11,7 @@ use App\MoonShine\Resources\Client\ClientResource;
 use App\MoonShine\Resources\CreditApplication\CreditApplicationResource;
 use App\MoonShine\Resources\MoonShineUser\MoonShineUserResource;
 use App\MoonShine\Resources\Option\OptionResource;
+use App\MoonShine\Resources\Report\ReportResource;
 use App\MoonShine\Resources\Sail\SailBuyResource;
 use App\MoonShine\Resources\Sail\SailSellResource;
 use App\MoonShine\Resources\UserRole\UserRoleResource;
@@ -49,6 +50,7 @@ final class MoonShineLayout extends AppLayout
             $menu[] = MenuGroup::make(static fn () => __('moonshine::ui.resource.system'), [
                 MenuItem::make(MoonShineUserResource::class),
                 MenuItem::make(UserRoleResource::class),
+                MenuItem::make(ReportResource::class, 'Отчёты'),
             ]);
         }
 

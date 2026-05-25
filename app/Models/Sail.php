@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Enums\Sail\SailStatus;
 use App\Enums\Sail\SailType;
+use App\Support\MoneyFormat;
 use App\Traits\Fileable;
 use Eloquent;
 use Illuminate\Database\Eloquent\Collection;
@@ -101,6 +102,6 @@ class Sail extends Model
 
     public function formattedPrice(): string
     {
-        return $this->price.' P';
+        return MoneyFormat::format($this->price);
     }
 }

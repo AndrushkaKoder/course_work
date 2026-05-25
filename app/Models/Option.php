@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
+use App\Support\MoneyFormat;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -50,5 +53,10 @@ class Option extends Model
             'option_id',
             'sail_id'
         );
+    }
+
+    public function formattedPrice(): string
+    {
+        return MoneyFormat::format($this->price);
     }
 }

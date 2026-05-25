@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\Car\CarStatus;
 use App\Enums\Car\CarType;
+use App\Support\MoneyFormat;
 use App\Traits\Fileable;
 use App\Traits\HasPreview;
 use Eloquent;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
@@ -21,7 +24,7 @@ use Illuminate\Support\Carbon;
  * @property int $price
  * @property string $color
  * @property CarType $type
- * @property int $count
+ * @property CarStatus $status
  * @property string|null $state_number
  * @property string|null $preview
  * @property array<array-key, mixed>|null $files
@@ -69,7 +72,7 @@ class Car extends Model
         'price',
         'color',
         'type',
-        'count',
+        'status',
         'state_number',
         'preview',
         'files',
@@ -78,7 +81,17 @@ class Car extends Model
 
     protected $casts = [
         'type' => CarType::class,
+        'status' => CarStatus::class,
     ];
+
+    /**
+     * @param  Builder<static>  $query
+     * @return Builder<static>
+     */
+    public function scopeInStock(Builder $query): Builder
+    {
+        return $query->where('status', CarStatus::IN_STOCK);
+    }
 
     public function getViewName(): string
     {
@@ -94,7 +107,12 @@ class Car extends Model
 
     public function getViewPrice(): string
     {
-        return "$this->price P";
+        return MoneyFormat::format($this->price);
+    }
+
+    public function formattedStatus(): string
+    {
+        return $this->status->translateStatus();
     }
 
     public function getFiles(): array

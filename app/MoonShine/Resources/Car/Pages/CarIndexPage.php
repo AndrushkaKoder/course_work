@@ -16,7 +16,6 @@ use MoonShine\UI\Components\Metrics\Wrapped\Metric;
 use MoonShine\UI\Components\Table\TableBuilder;
 use MoonShine\UI\Fields\ID;
 use MoonShine\UI\Fields\Image;
-use MoonShine\UI\Fields\Number;
 use MoonShine\UI\Fields\Text;
 use Throwable;
 
@@ -47,7 +46,7 @@ class CarIndexPage extends IndexPage
             Text::make('Год', 'year'),
             Text::make('VIN', 'vin_code'),
             Text::make('Цвет', 'color'),
-            Number::make('На складе', 'count'),
+            Text::make('Статус', 'status', fn (Car $car): string => $car->formattedStatus()),
             Text::make('Дата добавления', 'created_at'),
 
         ];

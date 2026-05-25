@@ -46,7 +46,7 @@ class SailFormPage extends FormPage
             ->get();
 
         $cars = Car::query()
-            ->where('count', '>', 0)
+            ->inStock()
             ->orderByDesc('id')
             ->get();
 

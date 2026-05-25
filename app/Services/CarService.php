@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\DTO\CreateCarDto;
 use App\DTO\GetCarsDto;
+use App\Enums\Car\CarStatus;
 use App\Enums\Car\CarType;
 use App\Models\Car;
 use Illuminate\Support\Collection;
@@ -20,13 +21,12 @@ final class CarService
         $car = new Car;
 
         $data = $dto->data;
-        $price = $dto->price;
 
-        $car->count = 1;
+        $car->status = CarStatus::IN_STOCK;
         $car->mark = $data['mark'];
         $car->model = $data['model'];
         $car->color = $data['color'];
-        $car->price = $price;
+        $car->price = $dto->price;
         $car->type = $data['type'];
         $car->year = $data['year'];
         $car->mileage = $data['mileage'];
@@ -42,16 +42,11 @@ final class CarService
         return $car;
     }
 
-    public function decrementCar(int $carId): void
+    public function updateCarStatus(int $carId, CarStatus $status): void
     {
-        Car::findOrFail($carId)->decrement('count');
-
-        $this->forgetCarsCache();
-    }
-
-    public function incrementCar(int $carId): void
-    {
-        Car::findOrFail($carId)->increment('count');
+        Car::query()
+            ->whereKey($carId)
+            ->update(['status' => $status]);
 
         $this->forgetCarsCache();
     }
@@ -61,7 +56,7 @@ final class CarService
         /** @var list<array<string, mixed>> $rows */
         $rows = Cache::remember(self::CARS_CACHE_KEY, 3600 * 24, function (): array {
             return Car::query()
-                ->where('count', '>', 0)
+                ->inStock()
                 ->orderByDesc('created_at')
                 ->get()
                 ->map(fn (Car $car): array => $car->attributesToArray())

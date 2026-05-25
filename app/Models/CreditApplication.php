@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\CreditApplication\CreditApplicationStatus;
+use App\Support\MoneyFormat;
 use App\Traits\Fileable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -68,6 +69,6 @@ class CreditApplication extends Model
 
     public function formattedSum(): string
     {
-        return number_format($this->sum, 0, ',', ' ').' ₽';
+        return MoneyFormat::format($this->sum, '₽');
     }
 }

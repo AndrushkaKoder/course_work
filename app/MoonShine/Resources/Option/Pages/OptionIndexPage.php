@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\MoonShine\Resources\Option\Pages;
 
+use App\Models\Option;
 use App\MoonShine\Resources\Option\OptionResource;
 use MoonShine\Contracts\UI\ComponentContract;
 use MoonShine\Contracts\UI\FieldContract;
@@ -33,7 +34,7 @@ class OptionIndexPage extends IndexPage
             ID::make(),
             Image::make('Превью', 'preview'),
             Text::make('Название', 'title'),
-            Text::make('Цена', 'price'),
+            Text::make('Цена', 'price', fn (Option $item): string => $item->formattedPrice()),
         ];
     }
 

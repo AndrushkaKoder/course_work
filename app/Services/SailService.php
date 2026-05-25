@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\DTO\CreateCarDto;
+use App\Enums\Car\CarStatus;
 use App\Enums\Sail\SailStatus;
 use App\Enums\Sail\SailType;
 use App\Models\Car;
@@ -43,10 +44,8 @@ final readonly class SailService
 
     private function update(Sail $sail, array $data): Sail
     {
-        $this->writeOffCar(
-            $sail,
-            $this->resolveStatus($data['status'] ?? null),
-        );
+        $this->syncSellCarStatus($sail, $this->resolveStatus($data['status'] ?? null));
+
         $attributes = array_intersect_key($data, array_flip(self::ATTRIBUTE_KEYS));
 
         if ($attributes !== []) {
@@ -78,9 +77,15 @@ final readonly class SailService
         }
 
         return DB::transaction(function () use ($data) {
+            $car = Car::query()->findOrFail($data['car_id']);
+
+            if ($car->status !== CarStatus::IN_STOCK) {
+                throw new Exception('Автомобиль недоступен для продажи');
+            }
+
             $sail = $this->createSail($data);
 
-            $this->writeOffCar($sail, $this->resolveStatus($data['status'] ?? null));
+            $this->syncSellCarStatus($sail, $this->resolveStatus($data['status'] ?? null));
 
             return $sail;
         });
@@ -123,29 +128,28 @@ final readonly class SailService
         return $sail;
     }
 
-    private function writeOffCar(Sail $sail, ?SailStatus $newStatus): void
+    private function syncSellCarStatus(Sail $sail, ?SailStatus $sailStatus): void
     {
-        if ($newStatus === null || $newStatus === SailStatus::PENDING) {
+        if ($this->resolveType($sail->type) !== SailType::SELL) {
             return;
         }
 
-        $previousStatus = $sail->wasRecentlyCreated
-            ? null
-            : $this->resolveStatus($sail->getOriginal('status') ?? $sail->status);
-
-        if ($previousStatus === $newStatus) {
+        if ($sail->car_id === null) {
             return;
         }
 
-        if ($previousStatus === SailStatus::COMPLETED && $newStatus === SailStatus::CANCELLED) {
-            $this->carService->incrementCar((int) $sail->car_id);
+        $carStatus = match ($sailStatus) {
+            SailStatus::PENDING => CarStatus::RESERVED,
+            SailStatus::COMPLETED => CarStatus::SOLD,
+            SailStatus::CANCELLED => CarStatus::IN_STOCK,
+            default => null,
+        };
 
+        if ($carStatus === null) {
             return;
         }
 
-        if ($this->resolveType($sail->type) === SailType::SELL && $newStatus === SailStatus::COMPLETED) {
-            $this->carService->decrementCar((int) $sail->car_id);
-        }
+        $this->carService->updateCarStatus((int) $sail->car_id, $carStatus);
     }
 
     private function resolveStatus(mixed $status): ?SailStatus

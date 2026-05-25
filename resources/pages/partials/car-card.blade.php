@@ -35,7 +35,7 @@
                 </li>
             @endif
             <li class="rounded-full border border-white/10 bg-slate-800/80 px-2.5 py-1">
-                В наличии: {{ $car->count }}
+                {{ $car->formattedStatus() }}
             </li>
         </ul>
     </div>
