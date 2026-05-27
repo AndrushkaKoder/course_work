@@ -1,0 +1,11 @@
+flowchart TD
+    Start([ReportService.create]) --> Save[Создать запись reports PENDING]
+    Save --> Dispatch[GenerateReportJob dispatch]
+    Dispatch --> Job[Очередь Redis]
+    Job --> Gen[ReportService.generate]
+    Gen --> Proc[status PROCESSING]
+    Proc --> Fetch[Выборка COMPLETED sails за период]
+    Fetch --> XLSX[OpenSpout Writer XLSX]
+    XLSX --> Ok{успех?}
+    Ok -->|да| Done[status COMPLETED file path]
+    Ok -->|нет| Fail[status FAILED]

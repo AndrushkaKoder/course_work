@@ -25,3 +25,6 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+.venv-docx/
+docs/coursework/_title_temp.docx
+docs/coursework/_body_temp.docx

@@ -1,0 +1,19 @@
+flowchart LR
+    Visitor[Посетитель]
+    Manager[Менеджер]
+    Admin[Администратор]
+    ExtAPI[Внешний API автомобилей]
+
+    System(("0\nDriveLine"))
+
+    Visitor -->|Просмотр каталога| System
+    System -->|Страница каталога| Visitor
+
+    Manager -->|CRUD сделок, клиентов, авто| System
+    System -->|Экранные формы, статусы| Manager
+
+    Admin -->|Пользователи, роли, отчёты| System
+    System -->|Отчёты XLSX, настройки| Admin
+
+    ExtAPI -->|JSON данные авто| System
+    System -->|Записи в cars| ExtAPI

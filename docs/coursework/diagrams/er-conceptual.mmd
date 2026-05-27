@@ -1,0 +1,58 @@
+erDiagram
+    cars ||--o{ sails : "участвует"
+    clients ||--o{ sails : "оформляет"
+    users ||--o{ sails : "ведёт"
+    sails }o--o{ options : "включает"
+    clients ||--o{ credit_applications : "подаёт"
+    users ||--o{ credit_applications : "обрабатывает"
+    users ||--o{ reports : "создаёт"
+    user_roles ||--o{ users : "назначена"
+    users ||--o| user_permissions : "имеет"
+
+    cars {
+        bigint id PK
+        string mark
+        string model
+        string vin_code
+        int price
+        int status
+        enum type
+    }
+
+    clients {
+        bigint id PK
+        string name
+        string phone UK
+    }
+
+    sails {
+        bigint id PK
+        enum type
+        enum status
+        int price
+    }
+
+    options {
+        bigint id PK
+        string name
+        int price
+    }
+
+    credit_applications {
+        bigint id PK
+        int sum
+        int status
+    }
+
+    reports {
+        bigint id PK
+        date from
+        date to
+        int type
+    }
+
+    users {
+        bigint id PK
+        string name
+        int user_role_id FK
+    }

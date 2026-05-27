@@ -6,6 +6,7 @@ namespace App\MoonShine\Resources\Sail;
 
 use App\Enums\Sail\SailType;
 use App\Models\Sail;
+use App\Models\User;
 use App\MoonShine\Resources\Sail\Pages\Sell\SailDetailPage;
 use App\MoonShine\Resources\Sail\Pages\Sell\SailFormPage;
 use App\MoonShine\Resources\Sail\Pages\Sell\SailIndexPage;

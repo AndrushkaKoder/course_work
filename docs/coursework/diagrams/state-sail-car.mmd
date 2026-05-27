@@ -1,0 +1,23 @@
+stateDiagram-v2
+    direction LR
+
+    state "Сделка продажи" as Sail {
+        [*] --> Pending: создание
+        Pending --> Completed: завершить
+        Pending --> Cancelled: отменить
+        Completed --> [*]
+        Cancelled --> [*]
+    }
+
+    state "Автомобиль" as Car {
+        [*] --> InStock
+        InStock --> Reserved: сделка Pending
+        Reserved --> Sold: сделка Completed
+        Reserved --> InStock: сделка Cancelled
+        Sold --> InStock: сделка Cancelled
+    }
+
+    note right of Sail
+        SailService::syncSellCarStatus
+        только для типа SELL
+    end note

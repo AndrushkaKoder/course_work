@@ -1,0 +1,35 @@
+flowchart TB
+    subgraph client [Клиент]
+        Browser[Браузер]
+    end
+
+    subgraph docker [Docker Compose]
+        Nginx[Nginx :80]
+        PHP[PHP-FPM Laravel 13]
+        PG[(PostgreSQL 15)]
+        Redis[(Redis)]
+    end
+
+    Browser --> Nginx
+    Nginx --> PHP
+    PHP --> PG
+    PHP --> Redis
+
+    subgraph layers [Слои приложения]
+        Routes[routes/web.php]
+        HC[HomeController]
+        MS[MoonShine Resources]
+        Svc[Services]
+        Models[Eloquent Models]
+        Jobs[Jobs Queue]
+    end
+
+    PHP --> Routes
+    Routes --> HC
+    Routes --> MS
+    MS --> Svc
+    HC --> Svc
+    Svc --> Models
+    Svc --> Jobs
+    Models --> PG
+    Jobs --> Redis

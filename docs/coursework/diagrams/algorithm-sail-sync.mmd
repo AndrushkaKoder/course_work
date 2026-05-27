@@ -1,0 +1,14 @@
+flowchart TD
+    Start([syncSellCarStatus]) --> CheckType{type == SELL?}
+    CheckType -->|нет| End([выход])
+    CheckType -->|да| CheckCar{car_id задан?}
+    CheckCar -->|нет| End
+    CheckCar -->|да| Match{статус сделки}
+    Match -->|PENDING| R[CarStatus RESERVED]
+    Match -->|COMPLETED| S[CarStatus SOLD]
+    Match -->|CANCELLED| I[CarStatus IN_STOCK]
+    Match -->|иначе| End
+    R --> Update[CarService.updateCarStatus]
+    S --> Update
+    I --> Update
+    Update --> End
