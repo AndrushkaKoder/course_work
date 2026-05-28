@@ -21,12 +21,14 @@ TITLE_PAGES = ROOT / "Титульный лист.pages"
 TITLE_DOCX = ROOT / "_title_temp.docx"
 BODY_DOCX = ROOT / "_body_temp.docx"
 OUTPUT = ROOT / "POYASNITELNAYA-ZAPISKA-full.docx"
+FINAL_PAGES = ROOT.parent / "final" / "POYASNITELNAYA-ZAPISKA-full.pages"
+DIAGRAMS_PNG = ROOT / "diagrams" / "png"
 
 FONT_NAME = "Times New Roman"
 FONT_SIZE = Pt(14)
 FIRST_LINE_INDENT = Cm(1.25)
 HANGING_INDENT = Cm(1.25)
-PLACEHOLDER_TEXT = "Место для скриншота / схемы таблицы"
+FIGURE_WIDTH = Cm(15.0)
 
 FIGURE_CAPTIONS: dict[str, str] = {
     "1.1": "Контекстная IDEF0-диаграмма «Управление деятельностью автосалона»",
@@ -38,6 +40,18 @@ FIGURE_CAPTIONS: dict[str, str] = {
     "3.1": "Архитектура развёртывания информационной системы DriveLine",
     "3.2": "Алгоритм синхронизации статуса автомобиля при сделке продажи",
     "3.3": "Алгоритм формирования отчёта в фоновом режиме",
+}
+
+FIGURE_IMAGES: dict[str, str] = {
+    "1.1": "idef0-context.png",
+    "1.2": "idef0-decomposition.png",
+    "2.1": "dfd-context.png",
+    "2.2": "dfd-level1.png",
+    "2.3": "er-conceptual.png",
+    "2.4": "state-sail-car.png",
+    "3.1": "architecture.png",
+    "3.2": "algorithm-sail-sync.png",
+    "3.3": "algorithm-report.png",
 }
 
 FIGURE_REF = re.compile(
@@ -175,26 +189,32 @@ def ensure_title_docx() -> Path:
 
 
 def add_figure_placeholder(doc: Document, figure_id: str) -> None:
+    """Вставляет диаграмму (PNG из diagrams/png/) и центрированную подпись
+    «Рисунок X.Y – …». PNG-файлы рендерятся из .mmd-исходников утилитой
+    mermaid-cli; если изображение не найдено — подпись добавляется без него."""
     if figure_id in getattr(doc, "_figures_added", set()):
         return
     if not hasattr(doc, "_figures_added"):
         doc._figures_added = set()
     doc._figures_added.add(figure_id)
 
-    spacer = doc.add_paragraph()
-    spacer.paragraph_format.first_line_indent = Cm(0)
-    spacer.paragraph_format.space_before = Pt(6)
-
-    box = doc.add_paragraph()
-    box.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    box.paragraph_format.first_line_indent = Cm(0)
-    run = box.add_run(f"*{PLACEHOLDER_TEXT}*")
-    set_run_font(run, italic=True)
+    image_name = FIGURE_IMAGES.get(figure_id)
+    if image_name:
+        image_path = DIAGRAMS_PNG / image_name
+        if image_path.is_file():
+            img_para = doc.add_paragraph()
+            img_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            img_para.paragraph_format.first_line_indent = Cm(0)
+            img_para.paragraph_format.space_before = Pt(12)
+            img_para.paragraph_format.space_after = Pt(2)
+            img_run = img_para.add_run()
+            img_run.add_picture(str(image_path), width=FIGURE_WIDTH)
 
     caption = FIGURE_CAPTIONS.get(figure_id, "Иллюстрация")
     cap = doc.add_paragraph()
     cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
     cap.paragraph_format.first_line_indent = Cm(0)
+    cap.paragraph_format.space_before = Pt(2)
     cap.paragraph_format.space_after = Pt(12)
     run = cap.add_run(f"Рисунок {figure_id} – {caption}")
     set_run_font(run)
@@ -250,15 +270,10 @@ def add_paragraph(doc: Document, text: str, *, indent: bool = True, align=None) 
 
 
 def add_ui_screenshot_placeholder(doc: Document) -> None:
-    key = "ui-screenshot"
-    if key in getattr(doc, "_figures_added", set()):
-        return
-    doc._figures_added.add(key)
-    box = doc.add_paragraph()
-    box.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    box.paragraph_format.first_line_indent = Cm(0)
-    run = box.add_run(f"*{PLACEHOLDER_TEXT}*")
-    set_run_font(run, italic=True)
+    """Маркер UI-скриншота больше не вставляется автоматически: соответствующие
+    таблицы соответствия экранных форм и таблиц БД (3.12 и др.) уже описаны в
+    основном тексте; конкретные скриншоты добавляются автором в приложении Д."""
+    return
 
 
 def add_heading(doc: Document, text: str, level: int) -> None:
@@ -474,11 +489,43 @@ def merge_documents(title_path: Path, body_path: Path, output_path: Path) -> Non
     composer.save(output_path)
 
 
+def export_final_pages(docx_path: Path, output_pages: Path) -> None:
+    """Открывает собранный docx в Pages и сохраняет как нативный .pages.
+    Pages переоткрывает .docx со своим рендером — это тот же путь, которым
+    пользователь ранее вручную делал .pages из .docx, поэтому стилистика
+    воспроизводится один-в-один."""
+    output_pages.parent.mkdir(parents=True, exist_ok=True)
+    if output_pages.exists():
+        output_pages.unlink()
+
+    script = f'''
+    tell application "Pages"
+        activate
+        set theDoc to open POSIX file "{docx_path}"
+        delay 1.5
+        save theDoc in POSIX file "{output_pages}"
+        delay 0.8
+        close theDoc saving no
+    end tell
+    '''
+    result = subprocess.run(
+        ["osascript", "-e", script],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        print("osascript stderr:", result.stderr, file=sys.stderr)
+        print("osascript stdout:", result.stdout, file=sys.stderr)
+        raise RuntimeError("Не удалось собрать финальный .pages через AppleScript")
+
+
 def build(md_path: Path, output_path: Path) -> None:
     title_path = ensure_title_docx()
     build_body(md_path, BODY_DOCX)
     merge_documents(title_path, BODY_DOCX, output_path)
     apply_page_numbering(output_path)
+    export_final_pages(output_path, FINAL_PAGES)
 
 
 def main() -> int:
@@ -488,8 +535,9 @@ def main() -> int:
         print(f"Файл не найден: {source}", file=sys.stderr)
         return 1
     build(source, output)
-    print(f"Создан: {output}")
-    print("Откройте в Word и обновите оглавление (правый клик → Обновить поле).")
+    print(f"Создан docx: {output}")
+    print(f"Создан финальный .pages: {FINAL_PAGES}")
+    print("Откройте .pages — титул из «Титульный лист.pages» сохранён без правок.")
     return 0
 
 
