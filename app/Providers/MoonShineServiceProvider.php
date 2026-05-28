@@ -18,6 +18,7 @@ use App\MoonShine\Resources\UserRole\UserRoleResource;
 use App\Traits\HasUserPermissions;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
+use MoonShine\Contracts\Core\DependencyInjection\ConfiguratorContract;
 use MoonShine\Contracts\Core\DependencyInjection\CoreContract;
 use MoonShine\Contracts\Core\ResourceContract;
 use MoonShine\Laravel\DependencyInjection\MoonShineConfigurator;
@@ -64,6 +65,9 @@ class MoonShineServiceProvider extends ServiceProvider
                 return $user->isHavePermission($resource::class, $ability);
             },
         );
+
+        // В PHPUnit ConfiguratorContract — bind, а не singleton: один экземпляр с правилами.
+        $this->app->singleton(ConfiguratorContract::class, static fn (): ConfiguratorContract => $config);
 
         $core
             ->resources([
