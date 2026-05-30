@@ -10,11 +10,14 @@
         "ext-fileinfo": "*",
         "laravel/framework": "^13.0",
         "laravel/horizon": "^5.47",
+        "laravel/sanctum": "^4.0",
         "laravel/tinker": "^3.0",
         "moonshine/moonshine": "^4.11",
         "moonshine/permissions": "^3.0",
         "openspout/openspout": "^5.7",
-        "predis/predis": "^3.0"
+        "predis/predis": "^3.0",
+        "promphp/prometheus_client_php": "^2.15",
+        "ext-redis": "*"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.7",
